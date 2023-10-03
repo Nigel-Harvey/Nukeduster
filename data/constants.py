@@ -14,3 +14,8 @@ MEDIUM_LENGTH = 500
 HARD_WIDTH =    800
 HARD_LENGTH =   600
 
+# Screen states
+MENU =      0
+EASY =      1
+MEDIUM =    2
+HARD =      3
