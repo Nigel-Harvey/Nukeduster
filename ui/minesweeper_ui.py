@@ -50,21 +50,20 @@ def difficulty_easy_action():
 
 def difficulty_medium_action():
     print("Medium Mode is not available yet")
-    # global screen_state
-    # screen_state = constants.MEDIUM
-
-    # pygame.display.set_mode((constants.MEDIUM_WIDTH, constants.MEDIUM_LENGTH))
+    change_state(constants.MEDIUM)
+    pygame.display.set_mode((constants.MEDIUM_WIDTH, constants.MEDIUM_LENGTH))
 
 def difficulty_hard_action():
     print("Hard Mode is not available yet")
-    # global screen_state
-    # screen_state = constants.HARD
-
-    # pygame.display.set_mode((constants.HARD_WIDTH, constants.HARD_LENGTH))
+    change_state(constants.HARD)
+    pygame.display.set_mode((constants.HARD_WIDTH, constants.HARD_LENGTH))
 
 def quit_action():
     pygame.quit()
     sys.exit()
+
+def reset_action():
+    print("This button is supposed to reset the game board")
 
 def menu_action():
     print("Returning to menu")
@@ -72,14 +71,11 @@ def menu_action():
     pygame.display.set_mode((constants.MENU_WIDTH, constants.MENU_LENGTH))
 
 
-
 class Tile:
-    def __init__(self, x_coord, y_coord, width, length, colour, hover_colour, action_left, action_right):
+    def __init__(self, x_coord, y_coord, width, length, colour, hover_colour):
         self.rectangle =    pygame.Rect(x_coord, y_coord, width, length)
         self.colour =       colour
         self.hover_colour = hover_colour
-        self.action_left =  action_left
-        self.action_right = action_right
         self.font =         pygame.font.Font(None, 36)
         self.hovering =     False               # start without hovering functionality active
         self.flagged =      0                   # start without tile flagged -> 0 is unflagged, 1 is flagged
@@ -135,24 +131,23 @@ class Tile:
         # if a mouse button is clicked and the mousebutton was a left click
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             if self.rectangle.collidepoint(event.pos):
-                self.action_left()
+                self.tile_reveal()
 
         # if a mouse button is clicked and the mousebutton was a right click
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
             if self.rectangle.collidepoint(event.pos):
-                self.action_right()
+                self.tile_flag()
 
     def toggle_flag(self):
         self.flagged += 1 % 2
 
+    def tile_reveal(self):
+        print("Tile clicked")
+        self.revealed = True
 
-def tile_reveal(tile_obj):
-    print("Tile clicked")
-    tile_obj.revealed = True
-
-def tile_flag(tile_obj):
-    print("Tile flagged")
-    tile_obj.toggle_flag()
+    def tile_flag(self):
+        print("Tile flagged")
+        self.toggle_flag()
 
 
 class TextBox:
@@ -205,11 +200,12 @@ class EasyScreen:
         self.screen_type = screen_type
         # create UI elements for the menu screen
         self.button_list = []
-        self.but_menu =              Button(10, 10, 80, 30, "Menu", constants.WHITE, constants.GREY, menu_action)
-        self.but_quit =              Button(10, 50, 80, 30, "Quit", constants.WHITE, constants.GREY, quit_action)
-        self.button_list += self.but_menu, self.but_quit
+        self.but_menu =     Button(10, constants.EASY_LENGTH - (30 + 10), 80, 30, "Menu", constants.WHITE, constants.GREY, menu_action)
+        self.but_quit =     Button(constants.EASY_WIDTH - (80 + 10), constants.EASY_LENGTH - (30 + 10), 80, 30, "Quit", constants.WHITE, constants.GREY, quit_action)
+        self.but_reset =    Button(constants.EASY_WIDTH/2 - 40, 10, 80, 30, "Reset", constants.WHITE, constants.GREY, reset_action)
+        self.button_list += self.but_menu, self.but_quit, self.but_reset
 
-        self.tile_list = tile_generation(constants.EASY_GRID_WIDTH, constants.EASY_GRID_LENGTH, 28, 45)
+        self.tile_list = tile_generation(constants.EASY_GRID_WIDTH, constants.EASY_GRID_LENGTH, 0, 45)
 
         self.game_state =   constants.STARTING  # start with game-state = 0, which is starting mode
         
@@ -220,7 +216,33 @@ class EasyScreen:
 
 
     def draw(self, game_screen):
-        game_screen.fill(constants.PURPLE)           # sets the screen fill and overwrites other things
+        game_screen.fill(constants.GREEN_DARK)           # sets the screen fill and overwrites other things
+        for button in self.button_list:
+            button.draw(game_screen)
+        # self.but_menu.draw(game_screen)
+        # self.but_quit.draw(game_screen)
+        for row in self.tile_list:
+            for tile in row:
+                type(tile)
+                tile.draw(game_screen)
+
+
+class MediumScreen:
+    def __init__(self, screen_type):
+        self.screen_type = screen_type
+        # create UI elements for the menu screen
+        self.button_list = []
+        self.but_menu =              Button(10, constants.MEDIUM_LENGTH - (30 + 10), 80, 30, "Menu", constants.WHITE, constants.GREY, menu_action)
+        self.but_quit =              Button(constants.MEDIUM_WIDTH - (80 + 10), constants.MEDIUM_LENGTH - (30 + 10), 80, 30, "Quit", constants.WHITE, constants.GREY, quit_action)
+        self.button_list += self.but_menu, self.but_quit
+
+        self.tile_list = tile_generation(constants.MEDIUM_GRID_WIDTH, constants.MEDIUM_GRID_LENGTH, 0, 45)
+
+        self.game_state =   constants.STARTING  # start with game-state = 0, which is starting mode
+
+
+    def draw(self, game_screen):
+        game_screen.fill(constants.ORANGE)           # sets the screen fill and overwrites other things
         self.but_menu.draw(game_screen)
         self.but_quit.draw(game_screen)
         for row in self.tile_list:
@@ -228,30 +250,29 @@ class EasyScreen:
                 type(tile)
                 tile.draw(game_screen)
 
-    # def init_game(self):
-    #     list_of_tiles = 
-
-
-class MediumScreen:
-    def __init__(self, screen_type):
-        self.screen_type = screen_type
-
-    def update(self):
-        pass
-
-    def draw(self):
-        pass
-
 
 class HardScreen:
     def __init__(self, screen_type):
         self.screen_type = screen_type
+        # create UI elements for the menu screen
+        self.button_list = []
+        self.but_menu =              Button(10, constants.HARD_LENGTH - (30 + 10), 80, 30, "Menu", constants.WHITE, constants.GREY, menu_action)
+        self.but_quit =              Button(constants.HARD_WIDTH - (80 + 10), constants.HARD_LENGTH - (30 + 10), 80, 30, "Quit", constants.WHITE, constants.GREY, quit_action)
+        self.button_list += self.but_menu, self.but_quit
 
-    def update(self):
-        pass
+        self.tile_list = tile_generation(constants.HARD_GRID_WIDTH, constants.HARD_GRID_LENGTH, 0, 45)
 
-    def draw(self):
-        pass
+        self.game_state =   constants.STARTING  # start with game-state = 0, which is starting mode
+
+
+    def draw(self, game_screen):
+        game_screen.fill(constants.RED)           # sets the screen fill and overwrites other things
+        self.but_menu.draw(game_screen)
+        self.but_quit.draw(game_screen)
+        for row in self.tile_list:
+            for tile in row:
+                type(tile)
+                tile.draw(game_screen)
 
 
 def tile_generation(x_tiles, y_tiles, x_coord_offset=0, y_coord_offset=0):
@@ -262,7 +283,7 @@ def tile_generation(x_tiles, y_tiles, x_coord_offset=0, y_coord_offset=0):
     for i in range(x_tiles):
         y_coord = 2 + y_coord_offset
         for j in range(y_tiles):
-            tile_list[i][j] = Tile(x_coord, y_coord, 25, 25, constants.GREY, constants.GREY_LIGHT, tile_reveal, tile_flag)
+            tile_list[j][i] = Tile(x_coord, y_coord, 25, 25, constants.GREY, constants.GREY_LIGHT)
             y_coord += 27
         x_coord += 27
     return tile_list
