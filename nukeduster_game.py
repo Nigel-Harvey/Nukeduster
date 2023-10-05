@@ -34,13 +34,21 @@ if __name__ == "__main__":
             screen_state = ui.screen_state
             if screen_state == constants.MENU:
                 menu_screen.draw(screen)            # draw all menu buttons, textboxes, etc
-
                 # loop through the button list and check for events such as hovering or clicks
                 for button in menu_screen.button_list:
                     button.handle_event(event)
 
             elif screen_state == constants.EASY:
-                ui.change_state(constants.MENU)
+                if easy_screen.game_state == 0:
+                    # easy_screen.init_game()
+                    pass
+                elif easy_screen.game_state == 1:
+                    pass
+                easy_screen.draw(screen)            # draw all menu buttons, textboxes, etc
+                # loop through the button list and check for events such as hovering or clicks
+                for button in easy_screen.button_list:
+                    button.handle_event(event)
+
 
             elif ui.screen_state == constants.MEDIUM:
                 pass
