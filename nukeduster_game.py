@@ -12,6 +12,7 @@ if __name__ == "__main__":
     easy_screen =   ui.EasyScreen(constants.EASY)
     medium_screen = ui.MediumScreen(constants.MEDIUM)
     hard_screen =   ui.HardScreen(constants.HARD)
+    current_screen = menu_screen
 
     # set the window caption
     pygame.display.set_caption("Nukeduster - A Python Project")
@@ -32,30 +33,26 @@ if __name__ == "__main__":
 
             # chose which screen is in use
             screen_state = ui.screen_state
-            if screen_state == constants.MENU:
-                menu_screen.draw(screen)            # draw all menu buttons, textboxes, etc
-                # loop through the button list and check for events such as hovering or clicks
-                for button in menu_screen.button_list:
-                    button.handle_event(event)
-
-            elif screen_state == constants.EASY:
-                if easy_screen.game_state == 0:
-                    # easy_screen.init_game()
-                    pass
-                elif easy_screen.game_state == 1:
-                    pass
-                easy_screen.draw(screen)            # draw all menu buttons, textboxes, etc
-                # loop through the button list and check for events such as hovering or clicks
-                for button in easy_screen.button_list:
-                    button.handle_event(event)
+            match screen_state:
+                case constants.MENU:
+                    current_screen = menu_screen
+                case constants.EASY:
+                    current_screen = easy_screen
+                case constants.MEDIUM:
+                    current_screen = medium_screen
+                case constants.HARD:
+                    current_screen = hard_screen
 
 
-            elif ui.screen_state == constants.MEDIUM:
-                pass
-            
-            elif ui.screen_state == constants.HARD:
-                pass            
-
+            current_screen.draw(screen)            # draw all menu buttons, textboxes, etc
+            # loop through the button list and check for events such as hovering or clicks
+            for button in current_screen.button_list:
+                button.handle_event(event)
+            if screen_state != constants.MENU:
+                # loop through the tile list and check for events such as hovering or clicks
+                for row in current_screen.tile_list:
+                    for tile in row:
+                        tile.handle_event(event)
 
         pygame.display.update()                 # finally, update the display
 
