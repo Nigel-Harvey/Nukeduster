@@ -5,12 +5,20 @@
 import pygame
 import sys
 from data import constants
+from logic import minesweeper_logic as logic
 
 screen_state = constants.MENU
 
-def change_state(new_state):
+def change_screen_state(new_state):
     global screen_state
     screen_state = new_state
+
+game_state = constants.STARTING  # start with game-state = 0, which is starting mode
+
+def change_game_state(new_state):
+    global game_state
+    game_state = new_state
+
 
 class Button:
     def __init__(self, x_coord, y_coord, width, length, text, colour, hover_colour, action):
@@ -45,17 +53,17 @@ class Button:
 
 def difficulty_easy_action():
     print("Easy Mode selected")
-    change_state(constants.EASY)
+    change_screen_state(constants.EASY)
     pygame.display.set_mode((constants.EASY_WIDTH, constants.EASY_LENGTH))
 
 def difficulty_medium_action():
     print("Medium Mode is not available yet")
-    change_state(constants.MEDIUM)
+    change_screen_state(constants.MEDIUM)
     pygame.display.set_mode((constants.MEDIUM_WIDTH, constants.MEDIUM_LENGTH))
 
 def difficulty_hard_action():
     print("Hard Mode is not available yet")
-    change_state(constants.HARD)
+    change_screen_state(constants.HARD)
     pygame.display.set_mode((constants.HARD_WIDTH, constants.HARD_LENGTH))
 
 def quit_action():
@@ -67,23 +75,27 @@ def reset_action():
 
 def menu_action():
     print("Returning to menu")
-    change_state(constants.MENU)
+    change_screen_state(constants.MENU)
     pygame.display.set_mode((constants.MENU_WIDTH, constants.MENU_LENGTH))
 
 
 class Tile:
-    def __init__(self, x_coord, y_coord, width, length, colour, hover_colour):
+    def __init__(self, x_coord, y_coord, width, length, colour, hover_colour, tile_num, tile_num_x, tile_num_y):
         self.rectangle =    pygame.Rect(x_coord, y_coord, width, length)
         self.colour =       colour
         self.hover_colour = hover_colour
         self.font =         pygame.font.Font(None, 36)
         self.hovering =     False               # start without hovering functionality active
-        self.flagged =      0                   # start without tile flagged -> 0 is unflagged, 1 is flagged
+        self.flagged =      False               # start without tile flagged
         self.revealed =     False               # start without tile revealed 
         self.nuke =         False               # start without the tile being a nuke
         self.adj_nukes =    0                   # start with the value of adjecent nukes being int 0
         self.text =         ""                  # start with the text being an empty string
         self.text_colour =  constants.BLACK     # start with the text colour being BLACK
+
+        self.tile_num =     tile_num            # save tile nums for debugging purposes, may need tile_num for bomb generation exclusion
+        self.tile_num_x =   tile_num_x
+        self.tile_num_y =   tile_num_y
 
     def draw(self, screen):
         if self.hovering:
@@ -131,18 +143,23 @@ class Tile:
         # if a mouse button is clicked and the mousebutton was a left click
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             if self.rectangle.collidepoint(event.pos):
-                self.tile_reveal()
+                # run through logic to see if the tile_reveal function should be called
+                if logic.left_click(self.revealed, self.flagged):
+                    if game_state == constants.STARTING:
+                        game_state = constants.IN_PROGRESS
+                    self.tile_reveal()
 
         # if a mouse button is clicked and the mousebutton was a right click
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
             if self.rectangle.collidepoint(event.pos):
-                self.tile_flag()
+                if logic.right_click(self.revealed):
+                    self.tile_flag()
 
     def toggle_flag(self):
-        self.flagged += 1 % 2
+        self.flagged = not self.flagged
 
     def tile_reveal(self):
-        print("Tile clicked")
+        print(f"Tile {self.tile_num} clicked")
         self.revealed = True
 
     def tile_flag(self):
@@ -206,8 +223,6 @@ class EasyScreen:
         self.button_list += self.but_menu, self.but_quit, self.but_reset
 
         self.tile_list = tile_generation(constants.EASY_GRID_WIDTH, constants.EASY_GRID_LENGTH, 0, 45)
-
-        self.game_state =   constants.STARTING  # start with game-state = 0, which is starting mode
         
         # load in game data and set clock to 0
 
@@ -277,15 +292,14 @@ class HardScreen:
 
 def tile_generation(x_tiles, y_tiles, x_coord_offset=0, y_coord_offset=0):
     tile_list = [[0 for i in range(x_tiles)] for j in range(y_tiles)]
-
-    # 
-    x_coord = 2 + x_coord_offset
-    for i in range(x_tiles):
-        y_coord = 2 + y_coord_offset
-        for j in range(y_tiles):
-            tile_list[j][i] = Tile(x_coord, y_coord, 25, 25, constants.GREY, constants.GREY_LIGHT)
-            y_coord += 27
-        x_coord += 27
+    
+    y_coord = 2 + y_coord_offset
+    for i in range(y_tiles):
+        x_coord = 2 + x_coord_offset
+        for j in range(x_tiles):
+            tile_list[i][j] = Tile(x_coord, y_coord, 25, 25, constants.GREY, constants.GREY_LIGHT, j + i*y_tiles, i, j)
+            x_coord += 27
+        y_coord += 27
     return tile_list
 
 
