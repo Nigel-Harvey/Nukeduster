@@ -1,0 +1,18 @@
+Bug List
+1. Icon doesn't show up until a button has been clicked
+2. 
+
+Feature Addition
+1. Medium and Hard don't work
+    a. Need to make a general screen class that Easy, Medium, and Hard inherit. This is because all of them have the same functionality, but different parameters
+3. Add win screen
+4. Add game over screen
+5. Add a read_me.txt to tell the user what they need to play
+    a. python 3.11
+    b. py game
+    c. run the nukeduster_game.py file
+6. When a nuke is hit, reveal all nukes
+7. When switching between game modes, make sure the game is reset
+8. Add timer
+9. Add nuke count
+10. Add flag
