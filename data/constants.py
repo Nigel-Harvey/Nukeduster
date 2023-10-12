@@ -1,3 +1,7 @@
+# Auther:     Nigel Harvey
+# Purpose:    Contain the constants used in the game. These constants are centralized here to make changes to game dimensions and parameters simple
+
+
 # Colours
 WHITE =         (255, 255, 255)
 BLACK =         (0, 0, 0)
@@ -35,18 +39,23 @@ MEDIUM_NUKES =  40
 HARD_NUKES =    100
 
 # Game states
-STARTING =      0
-IN_PROGRESS =   1
-OVER =          2
+WAITING =       0
+INITIATING =    1
+IN_PROGRESS =   2
+OVER =          3
+RESET =         4
+
+# Tile constants
+SPACE_BETWEEN_TILES =   2
+TILE_WIDTH =            25
 
 # Screen sizes
 MENU_WIDTH =    600
 MENU_LENGTH =   800
-#               space between the edge of the window and tiles + the # of tiles + an offset
-#               no offset for WIDTH, 45 pixel on top and bottom for buttons and display
-EASY_WIDTH =    2 + 27*EASY_GRID_WIDTH
-EASY_LENGTH =   2 + 27*EASY_GRID_LENGTH + 45*2
-MEDIUM_WIDTH =  2 + 27*MEDIUM_GRID_WIDTH
-MEDIUM_LENGTH = 2 + 27*MEDIUM_GRID_LENGTH + 45*2
-HARD_WIDTH =    2 + 27*HARD_GRID_WIDTH
-HARD_LENGTH =   2 + 27*HARD_GRID_LENGTH + 45*2
+# TODO Consider increasing game widths to match the length
+EASY_WIDTH =    SPACE_BETWEEN_TILES + (TILE_WIDTH+SPACE_BETWEEN_TILES)*EASY_GRID_WIDTH
+EASY_LENGTH =   SPACE_BETWEEN_TILES + (TILE_WIDTH+SPACE_BETWEEN_TILES)*EASY_GRID_LENGTH + 45*2
+MEDIUM_WIDTH =  SPACE_BETWEEN_TILES + (TILE_WIDTH+SPACE_BETWEEN_TILES)*MEDIUM_GRID_WIDTH
+MEDIUM_LENGTH = SPACE_BETWEEN_TILES + (TILE_WIDTH+SPACE_BETWEEN_TILES)*MEDIUM_GRID_LENGTH + 45*2
+HARD_WIDTH =    SPACE_BETWEEN_TILES + (TILE_WIDTH+SPACE_BETWEEN_TILES)*HARD_GRID_WIDTH
+HARD_LENGTH =   SPACE_BETWEEN_TILES + (TILE_WIDTH+SPACE_BETWEEN_TILES)*HARD_GRID_LENGTH + 45*2
