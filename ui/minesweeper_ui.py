@@ -108,7 +108,8 @@ class Tile:
         self.tile_num =     tile_num            # save tile nums for debugging purposes, may need tile_num for bomb generation exclusion
         self.tile_num_x =   tile_num_x
         self.tile_num_y =   tile_num_y
-        self.img_nuke = pygame.image.load("data\\nuclear_bomb_24p.png")
+        self.img_nuke = pygame.image.load("data\\risk_skull_24p.png")
+        # self.img_nuke = pygame.image.load("data\\death_24p.png")
 
     def draw(self, screen):
         if self.hovering:
