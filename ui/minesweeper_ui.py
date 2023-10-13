@@ -108,6 +108,7 @@ class Tile:
         self.tile_num =     tile_num            # save tile nums for debugging purposes, may need tile_num for bomb generation exclusion
         self.tile_num_x =   tile_num_x
         self.tile_num_y =   tile_num_y
+        self.img_nuke = pygame.image.load("data\\nuclear_bomb_24p.png")
 
     def draw(self, screen):
         if self.hovering:
@@ -146,6 +147,11 @@ class Tile:
         text_surface = self.font.render(self.text, True, self.text_colour)
         text_rectangle = text_surface.get_rect(center=self.rectangle.center)
         screen.blit(text_surface, text_rectangle)
+        if self.flagged:
+            x = self.tile_num_x*(constants.TILE_WIDTH + constants.SPACE_BETWEEN_TILES) + 2
+            y = self.tile_num_y*(constants.TILE_WIDTH + constants.SPACE_BETWEEN_TILES) + 2 + 45
+            screen.blit(self.img_nuke, (x, y))
+        
 
     def handle_event(self, event):
         # if the mouse cursor moves
