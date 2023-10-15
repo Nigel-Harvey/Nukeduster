@@ -15,47 +15,65 @@ def init_game(curr_screen):
 
 
 def reset_game(curr_screen):
+    # reset values for all tiles
     for row in curr_screen.tile_list:
         for tile in row:
             tile.revealed = False
             tile.flagged = False
             tile.nuke = False
             tile.colour = constants.GREY
+            tile.hover_colour = constants.GREY_LIGHT
             tile.adj_nukes = 0
             tile.text = ""
             tile.text_colour = constants.BLACK
     curr_screen.revealed_safe = 0
+    curr_screen.txt_game_result.text = ""
     ui.game_state = constants.WAITING
+    return False
 
 
 def game_over(curr_screen):
     # num of tiles
     total_safe_tiles = curr_screen.grid_width*curr_screen.grid_length - curr_screen.nukes
+
+    # remove hover_colour
+    for row in curr_screen.tile_list:
+        for tile in row:
+            if not tile.revealed:
+                tile.hover_colour = tile.colour
+
     # Win condition
     if curr_screen.revealed_safe == total_safe_tiles:
-        curr_screen.text = "WIN!"
+        # show all nukes in flagged form
+        for row in curr_screen.tile_list:
+            for tile in row:
+                if tile.nuke:
+                    tile.flagged = True
+        
+        curr_screen.txt_game_result.text = "WIN!"
+        print("You win!")
     # Lose condition
     else:
         # set coords to the last clicked tile, which would be the nuke clicked in this case
         x_coord, y_coord = ui.Tile.last_used_tile_coords
+
         # set tile colour and hover colour to RED
         curr_screen.tile_list[x_coord][y_coord].colour = constants.RED
         curr_screen.tile_list[x_coord][y_coord].hover_colour = constants.RED
+
         # show all nukes except flagged ones
         for row in curr_screen.tile_list:
             for tile in row:
                 if tile.nuke:
                     tile.revealed = True
-                    if not tile.flagged:
-                        tile.text = "B"
+
         print("GG LOSER")
-        curr_screen.text = "lose"
+        curr_screen.txt_game_result.text = "lose"
     print(f"Constant: {total_safe_tiles}. Revealed Safe Tiles: {curr_screen.revealed_safe}")
 
     return True
 
 
-# if __name__ == "__main__":
 def play_game():
     pygame.init()
 
@@ -97,12 +115,10 @@ def play_game():
                 case constants.HARD:
                     current_screen = hard_screen
 
-            # draw all elements (buttons, textboxes, etc)
-            current_screen.draw(screen)
-
             # loop through the button list and check for events such as hovering or clicks
             for button in current_screen.button_list:
                 button.handle_event(event)
+            
             # if currently in a game (not the menu)
             if screen_state != constants.MENU:
                 # loop through the tile list and check for events such as hovering or clicks
@@ -122,15 +138,16 @@ def play_game():
                     init_game(current_screen)
                 # if the reset button is clicked
                 elif ui.game_state == constants.RESET:
-                    reset_game(current_screen)
+                    end_game_reached = reset_game(current_screen)
                 # if a nuke is clicked or all safe tiles have been revealed
                 elif ui.game_state == constants.OVER:
-                    
                     if not end_game_reached:
                         end_game_reached = game_over(current_screen)
 
         last_revealed_tile = ui.Tile.last_used_tile_num
 
+        # draw all elements (buttons, textboxes, etc)
+        current_screen.draw(screen)
         # finally, update the display
         pygame.display.update()
 

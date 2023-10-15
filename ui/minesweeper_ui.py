@@ -7,10 +7,6 @@ import sys
 from data import constants
 from logic import minesweeper_logic as logic
 
-# class Screen:
-
-#     def __init__(self):
-#         self.
 
 global screen_state
 screen_state = constants.MENU
@@ -59,6 +55,7 @@ class Button:
                 self.action()
 
 
+# define all the actions that differnent buttons have
 def difficulty_easy_action():
     print("Easy Mode selected")
     change_screen_state(constants.EASY)
@@ -88,6 +85,9 @@ def menu_action():
     change_screen_state(constants.MENU)
     pygame.display.set_mode((constants.MENU_WIDTH, constants.MENU_LENGTH))
 
+    # reset of the player goes from the game to the menu
+    reset_action()
+
 
 class Tile:
     last_used_tile_num = None
@@ -97,19 +97,19 @@ class Tile:
         self.colour =       colour
         self.hover_colour = hover_colour
         self.font =         pygame.font.Font(None, 36)
-        self.hovering =     False               # start without hovering functionality active
+        self.hovering =     False               # start without hover active
         self.flagged =      False               # start without tile flagged
         self.revealed =     False               # start without tile revealed 
         self.nuke =         False               # start without the tile being a nuke
         self.adj_nukes =    0                   # start with the value of adjecent nukes being int 0
         self.text =         ""                  # start with the text being an empty string
         self.text_colour =  constants.BLACK     # start with the text colour being BLACK
-
-        self.tile_num =     tile_num            # save tile nums for debugging purposes, may need tile_num for bomb generation exclusion
+        self.tile_num =     tile_num            # save tile num (need tile_num for bomb generation exclusion and referencing Tile instances)
         self.tile_num_x =   tile_num_x
         self.tile_num_y =   tile_num_y
-        self.img_nuke = pygame.image.load("data\\risk_skull_24p.png")
-        # self.img_nuke = pygame.image.load("data\\death_24p.png")
+        self.img_flag = pygame.image.load("data\\risk_skull_24p.png")
+        # self.img_flag = pygame.image.load("data\\death_24p.png")
+        self.img_nuke = pygame.image.load("data\\nuclear_bomb_24p.png")
 
     def draw(self, screen):
         if self.hovering:
@@ -117,6 +117,7 @@ class Tile:
         else:
             pygame.draw.rect(screen, self.colour, self.rectangle)
 
+        # if the tile isn't a nuke
         if self.nuke == 0:
             # set text and colour of text based on the # of adject nukes
             match self.adj_nukes:
@@ -148,11 +149,18 @@ class Tile:
         text_surface = self.font.render(self.text, True, self.text_colour)
         text_rectangle = text_surface.get_rect(center=self.rectangle.center)
         screen.blit(text_surface, text_rectangle)
+        
+        # if flagged, put the image of the flag in the tile
         if self.flagged:
             x = self.tile_num_x*(constants.TILE_WIDTH + constants.SPACE_BETWEEN_TILES) + 2
             y = self.tile_num_y*(constants.TILE_WIDTH + constants.SPACE_BETWEEN_TILES) + 2 + 45
+            screen.blit(self.img_flag, (x, y))
+
+        # if a nuke that isn't flagged and is revealed, put the image of the nuke in the tile
+        if self.nuke and self.revealed and not self.flagged:
+            x = self.tile_num_x*(constants.TILE_WIDTH + constants.SPACE_BETWEEN_TILES) + 2
+            y = self.tile_num_y*(constants.TILE_WIDTH + constants.SPACE_BETWEEN_TILES) + 2 + 45
             screen.blit(self.img_nuke, (x, y))
-        
 
     def handle_event(self, event):
         # if the mouse cursor moves
@@ -166,16 +174,12 @@ class Tile:
                 # run through logic to see if the tile_reveal function should be called
                 global game_state
                 if logic.left_click(self.revealed, self.flagged, game_state):
-                    if game_state == constants.IN_PROGRESS:         # Note: Put this state first to reduce if comparisons (this is most common state)
-                        Tile.last_used_tile_num = self.tile_num     # Set the previously clicked tile. This is bc reveal_tile can't be called from within the 
-                                                                    # Tile class due to circular reference.
-                        Tile.last_used_tile_coords = self.tile_num_x, self.tile_num_y
-                    elif game_state == constants.WAITING:
+                    # if the game is in WAITING (hasn't begun) then set it to INITIATING after the first left click on a tile
+                    if game_state == constants.WAITING:
                         game_state = constants.INITIATING
-                        Tile.last_used_tile_num = self.tile_num
-                        Tile.last_used_tile_coords = self.tile_num_x, self.tile_num_y
-                    # self.tile_reveal()
-                    # print(f"Tile {self.tile_num} ({self.tile_num_x}, {self.tile_num_y}) clicked")
+                    # Set the previously clicked tile. This affects tiles being revealed and prevents multiple reveals of the same tile
+                    Tile.last_used_tile_num = self.tile_num
+                    Tile.last_used_tile_coords = self.tile_num_x, self.tile_num_y
 
         # if a mouse button is clicked and the mousebutton was a right click
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
@@ -183,12 +187,6 @@ class Tile:
                 if logic.right_click(self.revealed, game_state):
                     # toggle the flag
                     self.flagged = not self.flagged
-                    print("Tile flagged")
-
-    # def tile_reveal(self):
-    #     # TODO remove this function if it's still not used at the end of the project
-        
-    #     pass
 
 
 class TextBox:
@@ -206,6 +204,12 @@ class TextBox:
     def draw(self, screen):
         text_surface = self.font.render(self.text, True, self.color)
         screen.blit(text_surface, self.rect.topleft)
+
+
+# class Screen:
+
+#     def __init__(self):
+#         self.
 
 
 class MenuScreen:
@@ -251,9 +255,9 @@ class EasyScreen:
         self.nukes = constants.EASY_NUKES
         self.revealed_safe = 0
 
-        self.txt_game_result = TextBox(80, 30, "Play", 36, constants.WHITE)
+        self.txt_game_result = TextBox(80, 30, "", 36, constants.WHITE)
         # TODO set this position
-        self.txt_game_result.set_position(constants.EASY_WIDTH/2 - self.txt_game_result.length, constants.EASY_LENGTH - (30 + 10))
+        self.txt_game_result.set_position(constants.EASY_WIDTH/2 - self.txt_game_result.length + 5, constants.EASY_LENGTH - (30 + 10))
 
         self.tile_list = tile_generation(self.grid_width, self.grid_length, 0, 45)
         # load in game data and set clock to 0

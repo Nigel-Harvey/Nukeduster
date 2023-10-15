@@ -1,29 +1,20 @@
 Bug List:
-    Red don't show when hovering
-    game_over don't work properly after reset
-    nuke reveal after game_over don't work until after a mouse movement
 
-    Icon doesn't show up until a button has been clicked
-        This has been fixed? May need to reload?
 
 Feature Addition:
 
 Make parent Screen class and have the difficulty screens inherit it so that Medium and Hard work
     a. Make sure the parent has all the functionality, and children have different parameters
 
-1. ***Add win screen
-    a. Flag all nukes
-    b. show indication of a win
-    c. Stop timer
-2. ***Add game over screen
+Add timer   (txt label)
+    Stop timer on game overreset timer on reset
+
+Add nuke count (txt label)
+    based on flags
+
+rename function to be more clear -> left_click = is_revealable
 
 Add a read_me.txt to tell the user what they need to play
     a. python 3.11
     b. py game
     c. run the nukeduster_game.py file
-
-3. ***When a nuke is hit, reveal all nukes
-
-When switching between game modes, make sure the game is reset
-Add timer
-Add nuke count

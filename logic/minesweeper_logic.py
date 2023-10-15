@@ -15,6 +15,9 @@ def right_click(revealed, game_state_local):
 
 
 def left_click(revealed, flagged, game_state_local):
+    # TODO make this inclusive instead of exclusive. Make it default return false
+    # if not revealed and not flagged:
+    #     return True
     if revealed or flagged:
         return False
     if game_state_local == constants.INITIATING or game_state_local == constants.OVER:
@@ -26,10 +29,6 @@ def nuke_generation(x_width_grid, y_width_grid, nukes_num, safe_tile_num, list_o
     lis_potential_nuke_tiles = list(range(0, x_width_grid*y_width_grid))
     lis_potential_nuke_tiles.pop(safe_tile_num)
     lis_nukes = random.sample(lis_potential_nuke_tiles, nukes_num)
-    # TODO Delete this when done this project
-    # print(f"Safe tile: {safe_tile_num}")
-    # print(f"lis_potential_nuke_tiles: {lis_potential_nuke_tiles}")
-    # print(f"lis_nukes: {lis_nukes}")
     print("List of nukes: ", end="")
     for nuke_num in lis_nukes:
         column = nuke_num % y_width_grid
@@ -49,8 +48,6 @@ def reveal_tile(list_of_tiles, tile_coords, grid_width, grid_length, curr_screen
 
     # Reveal B if it's a nuke
     if list_of_tiles[x_coord][y_coord].nuke:
-        # TODO Add the nuke picture instead of "B" OR put this somewhere else
-        list_of_tiles[x_coord][y_coord].text = "B"
         return False
 
     # Increment counter
@@ -108,7 +105,7 @@ def reveal_tile(list_of_tiles, tile_coords, grid_width, grid_length, curr_screen
     # if the tile has no adjacent nukes, use recursion to reveal adjacent tiles until the chunk is surrounded by tiles that have adjacent nukes
     if nuke_sum == 0:
         list_of_tiles[x_coord][y_coord].adj_nukes = 0       # Update tile attribute/parameter
-        # reveal adjecent tiles to find their nuke sums
+        # reveal adjacent tiles to find their nuke sums
         # top
         if not edge_case[0]:
             # top left
