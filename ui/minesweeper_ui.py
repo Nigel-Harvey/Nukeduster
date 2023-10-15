@@ -174,26 +174,21 @@ class Tile:
                         game_state = constants.INITIATING
                         Tile.last_used_tile_num = self.tile_num
                         Tile.last_used_tile_coords = self.tile_num_x, self.tile_num_y
-                    self.tile_reveal()
+                    # self.tile_reveal()
+                    # print(f"Tile {self.tile_num} ({self.tile_num_x}, {self.tile_num_y}) clicked")
 
         # if a mouse button is clicked and the mousebutton was a right click
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
             if self.rectangle.collidepoint(event.pos):
                 if logic.right_click(self.revealed, game_state):
-                    self.tile_flag()
+                    # toggle the flag
+                    self.flagged = not self.flagged
+                    print("Tile flagged")
 
-    def toggle_flag(self):
-        self.flagged = not self.flagged
-
-    def tile_reveal(self):
-        # TODO remove this function if it's still not used at the end of the project
-        # print(f"Tile {self.tile_num} ({self.tile_num_x}, {self.tile_num_y}) clicked")
-        pass
-
-    def tile_flag(self):
-        # TODO Make the flag do something
-        print("Tile flagged")
-        self.toggle_flag()
+    # def tile_reveal(self):
+    #     # TODO remove this function if it's still not used at the end of the project
+        
+    #     pass
 
 
 class TextBox:
@@ -254,6 +249,11 @@ class EasyScreen:
         self.grid_width = constants.EASY_GRID_WIDTH
         self.grid_length = constants.EASY_GRID_LENGTH
         self.nukes = constants.EASY_NUKES
+        self.revealed_safe = 0
+
+        self.txt_game_result = TextBox(80, 30, "Play", 36, constants.WHITE)
+        # TODO set this position
+        self.txt_game_result.set_position(constants.EASY_WIDTH/2 - self.txt_game_result.length, constants.EASY_LENGTH - (30 + 10))
 
         self.tile_list = tile_generation(self.grid_width, self.grid_length, 0, 45)
         # load in game data and set clock to 0
@@ -265,8 +265,8 @@ class EasyScreen:
             button.draw(game_screen)
         for row in self.tile_list:
             for tile in row:
-                # type(tile)
                 tile.draw(game_screen)
+        self.txt_game_result.draw(game_screen)
 
 
 class MediumScreen:

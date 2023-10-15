@@ -1,7 +1,10 @@
 Bug List:
+    Red don't show when hovering
+    game_over don't work properly after reset
+    nuke reveal after game_over don't work until after a mouse movement
 
-Icon doesn't show up until a button has been clicked
-    This has been fixed? May need to reload?
+    Icon doesn't show up until a button has been clicked
+        This has been fixed? May need to reload?
 
 Feature Addition:
 
@@ -9,6 +12,9 @@ Make parent Screen class and have the difficulty screens inherit it so that Medi
     a. Make sure the parent has all the functionality, and children have different parameters
 
 1. ***Add win screen
+    a. Flag all nukes
+    b. show indication of a win
+    c. Stop timer
 2. ***Add game over screen
 
 Add a read_me.txt to tell the user what they need to play

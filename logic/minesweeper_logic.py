@@ -38,9 +38,8 @@ def nuke_generation(x_width_grid, y_width_grid, nukes_num, safe_tile_num, list_o
         print(f"({column}, {row}), ", end="")
 
 
-def reveal_tile(list_of_tiles, tile_coords, grid_width, grid_length):
-    # TODO Delete this when done this project
-    print(f"Revealing tile: {tile_coords}")
+def reveal_tile(list_of_tiles, tile_coords, grid_width, grid_length, curr_screen):
+    # Set coordinates
     x_coord, y_coord = tile_coords
 
     # Set tile parameters to indicate it's been revealed
@@ -54,7 +53,11 @@ def reveal_tile(list_of_tiles, tile_coords, grid_width, grid_length):
         list_of_tiles[x_coord][y_coord].text = "B"
         return False
 
-    # check if the tile is on an edge (0 = top, 1 = right, 2 = bottom, 3 = left)
+    # Increment counter
+    curr_screen.revealed_safe += 1
+    print(f"Safe tile # {curr_screen.revealed_safe} revealed! Coords: ({x_coord}, {y_coord})")
+
+    # Check if the tile is on an edge (0 = top, 1 = right, 2 = bottom, 3 = left)
     edge_case = [False, False, False, False]
     if x_coord == 0:                    # left edge
         edge_case[3] = True
@@ -110,30 +113,30 @@ def reveal_tile(list_of_tiles, tile_coords, grid_width, grid_length):
         if not edge_case[0]:
             # top left
             if (not edge_case[3]) and (list_of_tiles[x_coord-1][y_coord-1].revealed == 0):
-                reveal_tile(list_of_tiles, (x_coord-1, y_coord-1), grid_width, grid_length)
+                reveal_tile(list_of_tiles, (x_coord-1, y_coord-1), grid_width, grid_length, curr_screen)
             # top
             if (list_of_tiles[x_coord][y_coord-1].revealed == 0):
-                reveal_tile(list_of_tiles, (x_coord, y_coord-1), grid_width, grid_length)
+                reveal_tile(list_of_tiles, (x_coord, y_coord-1), grid_width, grid_length, curr_screen)
             # top right
             if (not edge_case[1]) and (list_of_tiles[x_coord+1][y_coord-1].revealed == 0):
-                reveal_tile(list_of_tiles, (x_coord+1, y_coord-1), grid_width, grid_length)
+                reveal_tile(list_of_tiles, (x_coord+1, y_coord-1), grid_width, grid_length, curr_screen)
         # bottom
         if not edge_case[2]:
             # bottom right
             if (not edge_case[1]) and (list_of_tiles[x_coord+1][y_coord+1].revealed == 0):
-                reveal_tile(list_of_tiles, (x_coord+1, y_coord+1), grid_width, grid_length)
+                reveal_tile(list_of_tiles, (x_coord+1, y_coord+1), grid_width, grid_length, curr_screen)
             # bottom
             if (list_of_tiles[x_coord][y_coord+1].revealed == 0):
-                reveal_tile(list_of_tiles, (x_coord, y_coord+1), grid_width, grid_length)
+                reveal_tile(list_of_tiles, (x_coord, y_coord+1), grid_width, grid_length, curr_screen)
             # bottom left
             if (not edge_case[3]) and (list_of_tiles[x_coord-1][y_coord+1].revealed == 0):
-                reveal_tile(list_of_tiles, (x_coord-1, y_coord+1), grid_width, grid_length)
+                reveal_tile(list_of_tiles, (x_coord-1, y_coord+1), grid_width, grid_length, curr_screen)
         # right
         if not edge_case[1] and (list_of_tiles[x_coord+1][y_coord].revealed == 0):
-            reveal_tile(list_of_tiles, (x_coord+1, y_coord), grid_width, grid_length)
+            reveal_tile(list_of_tiles, (x_coord+1, y_coord), grid_width, grid_length, curr_screen)
         # left
         if not edge_case[3] and (list_of_tiles[x_coord-1][y_coord].revealed == 0):
-            reveal_tile(list_of_tiles, (x_coord-1, y_coord), grid_width, grid_length)
+            reveal_tile(list_of_tiles, (x_coord-1, y_coord), grid_width, grid_length, curr_screen)
     # if there is more than 0 adjacent nukes for the current tile instance
     else:
         list_of_tiles[x_coord][y_coord].adj_nukes = nuke_sum    # set attribute/parameter
