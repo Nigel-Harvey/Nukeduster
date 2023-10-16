@@ -1,20 +1,31 @@
 Bug List:
+1. Sometimes the same tile is incrementing revealed_safe twice, which ends games early. This has been observed in all modes. Only while playing fast thus far
+
+Debugging thing to remove:
+    Green nukes
+    print statements
 
 
 Feature Addition:
 
-Make parent Screen class and have the difficulty screens inherit it so that Medium and Hard work
-    a. Make sure the parent has all the functionality, and children have different parameters
-
-Add timer   (txt label)
+2. Add timer   (txt label)
     Stop timer on game overreset timer on reset
 
-Add nuke count (txt label)
+3. Add nuke count (txt label)
     based on flags
 
-rename function to be more clear -> left_click = is_revealable
+4. rename function to be more clear -> left_click = is_revealable
 
 Add a read_me.txt to tell the user what they need to play
     a. python 3.11
     b. py game
     c. run the nukeduster_game.py file
+
+
+Big Feature Ideas:
+1. Scoreboard with name input (would require a file to store data (xlsx or txt would work))
+
+2. Build a bot (using ML) to play the game and get good. 
+
+3. Coop option (can play over LAN or through browser)
+
