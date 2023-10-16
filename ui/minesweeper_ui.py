@@ -57,17 +57,14 @@ class Button:
 
 # define all the actions that differnent buttons have
 def difficulty_easy_action():
-    print("Easy Mode selected")
     change_screen_state(constants.EASY)
     pygame.display.set_mode((constants.EASY_WIDTH, constants.EASY_LENGTH))
 
 def difficulty_medium_action():
-    print("Medium Mode is not available yet")
     change_screen_state(constants.MEDIUM)
     pygame.display.set_mode((constants.MEDIUM_WIDTH, constants.MEDIUM_LENGTH))
 
 def difficulty_hard_action():
-    print("Hard Mode is not available yet")
     change_screen_state(constants.HARD)
     pygame.display.set_mode((constants.HARD_WIDTH, constants.HARD_LENGTH))
 
@@ -76,12 +73,10 @@ def quit_action():
     sys.exit()
 
 def reset_action():
-    print("This button resets the game board")
     global game_state
     game_state = constants.RESET
 
 def menu_action():
-    print("Returning to menu")
     change_screen_state(constants.MENU)
     pygame.display.set_mode((constants.MENU_WIDTH, constants.MENU_LENGTH))
 
@@ -104,7 +99,7 @@ class Tile:
         self.adj_nukes =    0                   # start with the value of adjecent nukes being int 0
         self.text =         ""                  # start with the text being an empty string
         self.text_colour =  constants.BLACK     # start with the text colour being BLACK
-        self.tile_num =     tile_num            # save tile num (need tile_num for bomb generation exclusion and referencing Tile instances)
+        self.tile_num =     tile_num            # save tile num (need tile_num for nuke generation exclusion and referencing Tile instances)
         self.tile_num_x =   tile_num_x
         self.tile_num_y =   tile_num_y
         self.img_flag = pygame.image.load("data\\risk_skull_24p.png")
@@ -177,6 +172,7 @@ class Tile:
                     # if the game is in WAITING (hasn't begun) then set it to INITIATING after the first left click on a tile
                     if game_state == constants.WAITING:
                         game_state = constants.INITIATING
+
                     # Set the previously clicked tile. This affects tiles being revealed and prevents multiple reveals of the same tile
                     Tile.last_used_tile_num = self.tile_num
                     Tile.last_used_tile_coords = self.tile_num_x, self.tile_num_y
@@ -204,12 +200,6 @@ class TextBox:
     def draw(self, screen):
         text_surface = self.font.render(self.text, True, self.color)
         screen.blit(text_surface, self.rect.topleft)
-
-
-# class Screen:
-
-#     def __init__(self):
-#         self.
 
 
 class MenuScreen:
@@ -240,98 +230,176 @@ class MenuScreen:
         game_screen.blit(self.img_nuke, (45, 150))
 
 
-class EasyScreen:
-    def __init__(self, screen_type):
-        self.screen_type = screen_type
-        # create UI elements for the menu screen
-        self.button_list = []
-        self.but_menu =     Button(10, constants.EASY_LENGTH - (30 + 10), 80, 30, "Menu", constants.WHITE, constants.GREY, menu_action)
-        self.but_quit =     Button(constants.EASY_WIDTH - (80 + 10), constants.EASY_LENGTH - (30 + 10), 80, 30, "Quit", constants.WHITE, constants.GREY, quit_action)
-        self.but_reset =    Button(constants.EASY_WIDTH/2 - 40, 10, 80, 30, "Reset", constants.WHITE, constants.GREY, reset_action)
-        self.button_list += self.but_menu, self.but_quit, self.but_reset
-        
-        self.grid_width = constants.EASY_GRID_WIDTH
-        self.grid_length = constants.EASY_GRID_LENGTH
-        self.nukes = constants.EASY_NUKES
+class DifficultyScreen:
+
+    def __init__(self):
+        # all screens start with the same num of safe revealed tiles
         self.revealed_safe = 0
 
-        self.txt_game_result = TextBox(80, 30, "", 36, constants.WHITE)
-        # TODO set this position
-        self.txt_game_result.set_position(constants.EASY_WIDTH/2 - self.txt_game_result.length + 5, constants.EASY_LENGTH - (30 + 10))
-
-        self.tile_list = tile_generation(self.grid_width, self.grid_length, 0, 45)
-        # load in game data and set clock to 0
-        # wait for first click, then start the clock
-
-    def draw(self, game_screen):
-        game_screen.fill(constants.GREEN_DARK)           # sets the screen fill and overwrites other things
+    def draw(self, game_screen, colour, textbox_list=None):
+        game_screen.fill(colour)           # sets the screen fill (colour) and overwrites evrything
+        
+        # draw button updates
         for button in self.button_list:
             button.draw(game_screen)
-        for row in self.tile_list:
-            for tile in row:
+
+        # draw tile updates (where list_row represents which list to use, which is equivalent to the y coord)
+        for list_row in self.tile_list:
+            for tile in list_row:
                 tile.draw(game_screen)
-        self.txt_game_result.draw(game_screen)
 
 
-class MediumScreen:
-    def __init__(self, screen_type):
-        self.screen_type = screen_type
-        # create UI elements for the menu screen
-        self.button_list = []
-        self.but_menu =              Button(10, constants.MEDIUM_LENGTH - (30 + 10), 80, 30, "Menu", constants.WHITE, constants.GREY, menu_action)
-        self.but_quit =              Button(constants.MEDIUM_WIDTH - (80 + 10), constants.MEDIUM_LENGTH - (30 + 10), 80, 30, "Quit", constants.WHITE, constants.GREY, quit_action)
-        self.button_list += self.but_menu, self.but_quit
+        # # draw textbox updates
+        # self.txt_game_result.draw(game_screen)
 
-        self.tile_list = tile_generation(constants.MEDIUM_GRID_WIDTH, constants.MEDIUM_GRID_LENGTH, 0, 45)
+        # draw textbox updates
+        for textbox in textbox_list:
+            textbox.draw(game_screen)
 
-        self.game_state =   constants.WAITING  # start with game-state = 0, which is waiting mode
 
+class EasyScreen(DifficultyScreen):
+    def __init__(self):
+        # inherit revealed_safe
+        super().__init__()
+
+        # define dimensions and settings
+        self.grid_width =       constants.EASY_GRID_WIDTH
+        self.grid_length =      constants.EASY_GRID_LENGTH
+        self.screen_width =     constants.EASY_WIDTH
+        self.screen_length =    constants.EASY_LENGTH
+        self.nukes =            constants.EASY_NUKES
+        self.screen_colour =    constants.GREEN_DARK
+
+        # create Button instances and store all Button instances in button_list
+        # x_coord, y_coord, width, length, text, colour, hover_colour, action
+        self.but_menu =     Button(x_coord=10, y_coord=self.screen_length - (30 + 10), width=80, length=30, text="Menu", colour=constants.WHITE, hover_colour=constants.GREY, action=menu_action)
+        self.but_quit =     Button(self.screen_width - (80 + 10), self.screen_length - (30 + 10), 80, 30, "Quit", constants.WHITE, constants.GREY, quit_action)
+        self.but_reset =    Button(self.screen_width/2 - 40, 10, 80, 30, "Reset", constants.WHITE, constants.GREY, reset_action)
+        self.button_list =  []
+        self.button_list += self.but_menu, self.but_quit, self.but_reset
+        
+        # create TextBox instances and store all TextBox instances in textbox_list
+        self.txt_game_result =  TextBox(80, 30, "", 36, constants.WHITE)
+        self.txt_game_result.set_position(x_coord=self.screen_width/2 - self.txt_game_result.length + 5, y_coord=self.screen_length - (30 + 10))
+        self.txt_nuke_count =  TextBox(80, 30, "Temp", 36, constants.WHITE)
+        self.txt_nuke_count.set_position(x_coord=10, y_coord=10)
+        self.textbox_list =  []
+        self.textbox_list += self.txt_game_result, self.txt_nuke_count
+
+        # set the screen_type which is used to change the screen_state when switching between screens
+        self.screen_type = constants.EASY
+
+        # generate Tile instances in a grid and store them in tile_list
+        self.tile_list = tile_generation(self.grid_width, self.grid_length, x_coord_offset=0, y_coord_offset=45)
+
+        # TODO load in game data and set clock to 0
+        # TODO wait for first click, then start the clock
 
     def draw(self, game_screen):
-        game_screen.fill(constants.ORANGE)           # sets the screen fill and overwrites other things
-        self.but_menu.draw(game_screen)
-        self.but_quit.draw(game_screen)
-        for row in self.tile_list:
-            for tile in row:
-                type(tile)
-                tile.draw(game_screen)
+        super().draw(game_screen, self.screen_colour, self.textbox_list)
 
 
-class HardScreen:
-    def __init__(self, screen_type):
-        self.screen_type = screen_type
-        # create UI elements for the menu screen
-        self.button_list = []
-        self.but_menu =              Button(10, constants.HARD_LENGTH - (30 + 10), 80, 30, "Menu", constants.WHITE, constants.GREY, menu_action)
-        self.but_quit =              Button(constants.HARD_WIDTH - (80 + 10), constants.HARD_LENGTH - (30 + 10), 80, 30, "Quit", constants.WHITE, constants.GREY, quit_action)
-        self.button_list += self.but_menu, self.but_quit
-        self.game_state =   constants.WAITING       # start with game-state = 0, which is waiting mode
-        self.tile_list = tile_generation(constants.HARD_GRID_WIDTH, constants.HARD_GRID_LENGTH, 0, 45)
+class MediumScreen(DifficultyScreen):
+    def __init__(self):
+        # inherit revealed_safe
+        super().__init__()
+
+        # define dimensions and settings
+        self.grid_width =       constants.MEDIUM_GRID_WIDTH
+        self.grid_length =      constants.MEDIUM_GRID_LENGTH
+        self.screen_width =     constants.MEDIUM_WIDTH
+        self.screen_length =    constants.MEDIUM_LENGTH
+        self.nukes =            constants.MEDIUM_NUKES
+        self.screen_colour =    constants.ORANGE
+
+        # create Button instances and store all Button instances in button_list
+        # x_coord, y_coord, width, length, text, colour, hover_colour, action
+        self.but_menu =     Button(x_coord=10, y_coord=self.screen_length - (30 + 10), width=80, length=30, text="Menu", colour=constants.WHITE, hover_colour=constants.GREY, action=menu_action)
+        self.but_quit =     Button(self.screen_width - (80 + 10), self.screen_length - (30 + 10), 80, 30, "Quit", constants.WHITE, constants.GREY, quit_action)
+        self.but_reset =    Button(self.screen_width/2 - 40, 10, 80, 30, "Reset", constants.WHITE, constants.GREY, reset_action)
+        self.button_list =  []
+        self.button_list += self.but_menu, self.but_quit, self.but_reset
+        
+        # create TextBox instances and store all TextBox instances in textbox_list
+        self.txt_game_result =  TextBox(80, 30, "", 36, constants.WHITE)
+        self.txt_game_result.set_position(x_coord=self.screen_width/2 - self.txt_game_result.length + 5, y_coord=self.screen_length - (30 + 10))
+        self.txt_nuke_count =  TextBox(80, 30, "Temp", 36, constants.WHITE)
+        self.txt_nuke_count.set_position(x_coord=10, y_coord=10)
+        self.textbox_list =  []
+        self.textbox_list += self.txt_game_result, self.txt_nuke_count
+
+        # set the screen_type which is used to change the screen_state when switching between screens
+        self.screen_type = constants.MEDIUM
+
+        # generate Tile instances in a grid and store them in tile_list
+        self.tile_list = tile_generation(self.grid_width, self.grid_length, x_coord_offset=0, y_coord_offset=45)
+
+        # TODO load in game data and set clock to 0
+        # TODO wait for first click, then start the clock
 
     def draw(self, game_screen):
-        game_screen.fill(constants.RED)           # sets the screen fill and overwrites other things
-        self.but_menu.draw(game_screen)
-        self.but_quit.draw(game_screen)
-        for row in self.tile_list:
-            for tile in row:
-                type(tile)
-                tile.draw(game_screen)
+        super().draw(game_screen, self.screen_colour, self.textbox_list)
+
+
+class HardScreen(DifficultyScreen):
+    def __init__(self):
+        # inherit revealed_safe
+        super().__init__()
+
+        # define dimensions and settings
+        self.grid_width =       constants.HARD_GRID_WIDTH
+        self.grid_length =      constants.HARD_GRID_LENGTH
+        self.screen_width =     constants.HARD_WIDTH
+        self.screen_length =    constants.HARD_LENGTH
+        self.nukes =            constants.HARD_NUKES
+        self.screen_colour =    constants.RED_DARK
+
+        # create Button instances and store all Button instances in button_list
+        # x_coord, y_coord, width, length, text, colour, hover_colour, action
+        self.but_menu =     Button(x_coord=10, y_coord=self.screen_length - (30 + 10), width=80, length=30, text="Menu", colour=constants.WHITE, hover_colour=constants.GREY, action=menu_action)
+        self.but_quit =     Button(self.screen_width - (80 + 10), self.screen_length - (30 + 10), 80, 30, "Quit", constants.WHITE, constants.GREY, quit_action)
+        self.but_reset =    Button(self.screen_width/2 - 40, 10, 80, 30, "Reset", constants.WHITE, constants.GREY, reset_action)
+        self.button_list =  []
+        self.button_list += self.but_menu, self.but_quit, self.but_reset
+
+        # create TextBox instances and store all TextBox instances in textbox_list
+        self.txt_game_result =  TextBox(80, 30, "", 36, constants.WHITE)
+        self.txt_game_result.set_position(x_coord=self.screen_width/2 - self.txt_game_result.length + 5, y_coord=self.screen_length - (30 + 10))
+        self.txt_nuke_count =  TextBox(80, 30, "Temp", 36, constants.WHITE)
+        self.txt_nuke_count.set_position(x_coord=10, y_coord=10)
+        self.textbox_list =  []
+        self.textbox_list += self.txt_game_result, self.txt_nuke_count
+
+        # set the screen_type which is used to change the screen_state when switching between screens
+        self.screen_type = constants.HARD
+
+        # generate Tile instances in a grid and store them in tile_list
+        self.tile_list = tile_generation(self.grid_width, self.grid_length, x_coord_offset=0, y_coord_offset=45)
+
+        # TODO load in game data and set clock to 0
+        # TODO wait for first click, then start the clock
+
+    def draw(self, game_screen):
+        super().draw(game_screen, self.screen_colour, self.textbox_list)
 
 
 def tile_generation(x_tiles, y_tiles, x_coord_offset=0, y_coord_offset=0):
     # generate a 2D list to store all the tile objects
-    tile_list = [[0 for i in range(y_tiles)] for j in range(x_tiles)]
+    tile_list = [[0 for i in range(x_tiles)] for j in range(y_tiles)]
     
     # generate all the tile objects
     y_coord = constants.SPACE_BETWEEN_TILES + y_coord_offset            # init the y coordinate with an offset of 2 pixels + a set offset purely for visuals
-    for row in range(y_tiles):              # loop through all rows, which are represented by y
+    for list_row in range(y_tiles):                                     # loop through all list_row, which are represented by y
         x_coord = constants.SPACE_BETWEEN_TILES + x_coord_offset        # init the x coordinate with an offset of 2 pixels + a set offset purely for visuals
-        for column in range(x_tiles):       # loop through all columns, which are represented by x
-            # store a Tile instance in the tile_list  list at the correct indexes 
-            tile_list[column][row] = Tile(x_coord, y_coord, 25, 25, constants.GREY, constants.GREY_LIGHT, (column + row*y_tiles), column, row)
+        for row_element in range(x_tiles):                              # loop through all row_elements, which are represented by x
+            # store a Tile instance in the tile_list list at the correct index
+            tile_list[list_row][row_element] = Tile(
+                                                    x_coord, y_coord, constants.TILE_WIDTH, constants.TILE_WIDTH, constants.GREY, constants.GREY_LIGHT, 
+                                                    (row_element + list_row*x_tiles), row_element, list_row)
             x_coord += constants.SPACE_BETWEEN_TILES + constants.TILE_WIDTH     # increase the x coordinate so that tiles don't overlap
         y_coord += constants.SPACE_BETWEEN_TILES + constants.TILE_WIDTH         # increase the y coordinate so that tiles don't overlap
     return tile_list
+
 
 # TODO Keep this around for scoreboard implementation
 # class TextInputBox:
