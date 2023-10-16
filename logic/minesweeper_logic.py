@@ -38,7 +38,6 @@ def nuke_generation(x_width_grid, y_width_grid, nukes_num, safe_tile_num, list_o
         row = int(nuke_num/x_width_grid)                    # find the row (y coord)
         # print(f"({column}, {row})", end=", ")
         list_of_tiles[row][column].nuke = True              # set the tile with those coords to be a nuke
-        list_of_tiles[row][column].colour = constants.GREEN
     # print("")
 
 
@@ -57,7 +56,6 @@ def reveal_tile(list_of_tiles, tile_coords, grid_width, grid_length, curr_screen
 
     # Increment counter
     curr_screen.revealed_safe += 1
-    print(f"Tile ({x_coord}, {y_coord}) is safe tile # \t{curr_screen.revealed_safe}")
 
     # Check if the tile is on an edge (0 = top, 1 = right, 2 = bottom, 3 = left)
     edge_case = [False, False, False, False]
