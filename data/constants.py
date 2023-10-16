@@ -11,6 +11,8 @@ GREY_LIGHT =    (200, 200, 200)
 
 PURPLE =        (83, 20, 120)
 RED =           (255, 0, 0)
+RED_LIGHT =     (247, 109, 109)
+RED_DARK =      (173, 50, 50)
 ORANGE =        (255, 128, 0)
 BLUE =          (0, 0, 255)
 BLUE_LIGHT =    (255, 102, 102)
