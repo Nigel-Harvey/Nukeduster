@@ -37,8 +37,8 @@ def game_over(curr_screen):
     total_safe_tiles = curr_screen.grid_width*curr_screen.grid_length - curr_screen.nukes
 
     # remove hover_colour
-    for row in curr_screen.tile_list:
-        for tile in row:
+    for list_row in curr_screen.tile_list:
+        for tile in list_row:
             if not tile.revealed:
                 tile.hover_colour = tile.colour
 
@@ -50,24 +50,27 @@ def game_over(curr_screen):
                 if tile.nuke:
                     tile.flagged = True
         
-        curr_screen.txt_game_result.text = "WIN!"
-        print("You win!")
+        curr_screen.txt_game_result.text = "WIN"
+
     # Lose condition
     else:
         # set coords to the last clicked tile, which would be the nuke clicked in this case
         x_coord, y_coord = ui.Tile.last_used_tile_coords
 
-        # set tile colour and hover colour to RED
-        curr_screen.tile_list[x_coord][y_coord].colour = constants.RED
-        curr_screen.tile_list[x_coord][y_coord].hover_colour = constants.RED
+        # set the clicked nuke tile's colour and hover colour to RED
+        curr_screen.tile_list[y_coord][x_coord].colour = constants.RED
+        curr_screen.tile_list[y_coord][x_coord].hover_colour = constants.RED
 
         # show all nukes except flagged ones
         for row in curr_screen.tile_list:
             for tile in row:
+                # if a tile is a nuke, reveal it
                 if tile.nuke:
                     tile.revealed = True
-
-        print("GG LOSER")
+                # if a tile is wrongly flagged, highlight it pink
+                elif tile.flagged and not tile.nuke:
+                    tile.colour = constants.PINK
+                    tile.hover_colour = constants.PINK
         curr_screen.txt_game_result.text = "lose"
     print(f"Constant: {total_safe_tiles}. Revealed Safe Tiles: {curr_screen.revealed_safe}")
 
@@ -77,12 +80,12 @@ def game_over(curr_screen):
 def play_game():
     pygame.init()
 
-    # init screens and start in the menu
+    # init instances of screens and prepare to start in the menu_screen
     screen = pygame.display.set_mode((constants.MENU_WIDTH, constants.MENU_LENGTH))
     menu_screen =   ui.MenuScreen(constants.MENU)
-    easy_screen =   ui.EasyScreen(constants.EASY)
-    medium_screen = ui.MediumScreen(constants.MEDIUM)
-    hard_screen =   ui.HardScreen(constants.HARD)
+    easy_screen =   ui.EasyScreen()
+    medium_screen = ui.MediumScreen()
+    hard_screen =   ui.HardScreen()
     current_screen = menu_screen
 
     # set the window caption
@@ -118,16 +121,19 @@ def play_game():
             # loop through the button list and check for events such as hovering or clicks
             for button in current_screen.button_list:
                 button.handle_event(event)
-            
+
             # if currently in a game (not the menu)
             if screen_state != constants.MENU:
                 # loop through the tile list and check for events such as hovering or clicks
-                for row in current_screen.tile_list:
-                    for tile in row:
+                for list_row in current_screen.tile_list:
+                    for tile in list_row:
                         tile.handle_event(event)
+
                 # if a game is in progress and a tile has just been clicked (this only runs immediately after a tile is clicked, and not again until a new tile is clicked)
                 if (ui.game_state == constants.IN_PROGRESS) and (ui.Tile.last_used_tile_num != last_revealed_tile):
-                    # if a bomb was clicked
+                    # if a nuke was clicked
+                    print(f"last_revealed_tile:         {last_revealed_tile}")
+                    print(f"ui.Tile.last_used_tile_num: {ui.Tile.last_used_tile_num}")
                     if not logic.reveal_tile(current_screen.tile_list, ui.Tile.last_used_tile_coords, current_screen.grid_width, current_screen.grid_length, current_screen):
                         ui.game_state = constants.OVER
                     # if all safe tiles have been revealed
@@ -144,18 +150,16 @@ def play_game():
                     if not end_game_reached:
                         end_game_reached = game_over(current_screen)
 
+        # overwrite old last tile with new last tile
         last_revealed_tile = ui.Tile.last_used_tile_num
 
         # draw all elements (buttons, textboxes, etc)
         current_screen.draw(screen)
+
         # finally, update the display
         pygame.display.update()
 
 
-    # show screen with option to continue, which doesn't impede sight of the game
-
-
-    # once continue is chosen, show scoreboard and leave buttons to exit or play again
-
+# if the nukeduster_game.py file is ran
 if __name__ == "__main__":
     play_game()
