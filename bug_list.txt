@@ -1,5 +1,4 @@
 Bug List:
-1. Sometimes the same tile is incrementing revealed_safe twice, which ends games early. This has been observed in all modes. Only while playing fast thus far
 
 Debugging thing to remove:
     Green nukes
