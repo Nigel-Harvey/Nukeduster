@@ -1,5 +1,6 @@
 # Auther:   Nigel Harvey
-# Purpose:  Be the runnable file that will go through the game sequence and call the modueles so that user can play minesweeper 
+# Purpose:  Be the runnable file that will go through the game sequence and
+#           call the modules so that user can play minesweeper
 
 
 from ui import minesweeper_ui as ui
@@ -10,10 +11,19 @@ import time
 
 
 def init_game(curr_screen):
-    logic.nuke_generation(curr_screen.grid_width, curr_screen.grid_length, curr_screen.nukes, ui.Tile.last_used_tile_num, curr_screen.tile_list)
+    # generate nukes
+    logic.nuke_generation(
+        curr_screen.grid_width, curr_screen.grid_length, curr_screen.nukes, ui.Tile.last_used_tile_num, curr_screen.tile_list
+    )
+
+    # put the game state into IN_PROGRESS and start the timer
     ui.game_state = constants.IN_PROGRESS
     curr_screen.start_time = time.time()
-    logic.reveal_tile(curr_screen.tile_list, ui.Tile.last_used_tile_coords, curr_screen.grid_width, curr_screen.grid_length, curr_screen)
+
+    # reveal the first clicked tile
+    logic.reveal_tile(
+        curr_screen.tile_list, ui.Tile.last_used_tile_coords, curr_screen.grid_width, curr_screen.grid_length, curr_screen
+    )
 
 
 def reset_game(curr_screen):
@@ -133,14 +143,25 @@ def play_game():
                     for tile in list_row:
                         tile.handle_event(event, current_screen)
 
-                # if a game is in progress and a tile has just been clicked (this only runs immediately after a tile is clicked, and not again until a new tile is clicked)
+                # if a game is in progress and a tile has just been clicked
+                # (this only runs immediately after a tile is clicked, and not again until a new tile is clicked)
                 if (ui.game_state == constants.IN_PROGRESS) and (ui.Tile.last_used_tile_num != last_revealed_tile):
                     # if a nuke was clicked
-                    if not logic.reveal_tile(current_screen.tile_list, ui.Tile.last_used_tile_coords, current_screen.grid_width, current_screen.grid_length, current_screen):
+                    if not logic.reveal_tile(
+                        current_screen.tile_list, ui.Tile.last_used_tile_coords, current_screen.grid_width,
+                        current_screen.grid_length, current_screen
+                        ):
+                        # set game state to over
                         ui.game_state = constants.OVER
+
                     # if all safe tiles have been revealed
-                    elif current_screen.revealed_safe == current_screen.grid_width*current_screen.grid_length - current_screen.nukes:
+                    elif (
+                        current_screen.revealed_safe ==
+                        current_screen.grid_width*current_screen.grid_length - current_screen.nukes
+                        ):
+                        # set game state to over
                         ui.game_state = constants.OVER
+
                 # if the first tile has just been clicked
                 elif ui.game_state == constants.INITIATING:
                     init_game(current_screen)

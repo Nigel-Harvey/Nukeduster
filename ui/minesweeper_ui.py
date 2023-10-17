@@ -11,6 +11,7 @@ from logic import minesweeper_logic as logic
 global screen_state
 screen_state = constants.MENU
 
+
 def change_screen_state(new_state):
     global screen_state
     screen_state = new_state
@@ -18,6 +19,7 @@ def change_screen_state(new_state):
 
 global game_state
 game_state = constants.WAITING  # start with game-state = 0, which is waiting mode
+
 
 def change_game_state(new_state):
     global game_state
@@ -53,13 +55,13 @@ class Button:
             # set hovering to True if the mouse curser is within the buttons coordinates
             self.hovering = self.rectangle.collidepoint(event.pos)
         
-        # if a mouse button is clicked and the mousebutton was a left click
+        # if a mouse button is clicked and the mouse button was a left click
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             if self.rectangle.collidepoint(event.pos):
                 self.action()
 
 
-# define all the actions that differnent buttons have
+# define all the actions that different buttons have
 def difficulty_easy_action():
     change_screen_state(constants.EASY)
     pygame.display.set_mode((constants.EASY_WIDTH, constants.EASY_LENGTH))
@@ -96,6 +98,7 @@ def menu_action():
 class Tile:
     last_used_tile_num = None
     last_used_tile_coords = None
+
     def __init__(self, x_coord, y_coord, width, length, colour, hover_colour, tile_num, tile_num_x, tile_num_y):
         self.rectangle =    pygame.Rect(x_coord, y_coord, width, length)
         self.colour =       colour
@@ -105,10 +108,10 @@ class Tile:
         self.flagged =      False               # start without tile flagged
         self.revealed =     False               # start without tile revealed 
         self.nuke =         False               # start without the tile being a nuke
-        self.adj_nukes =    0                   # start with the value of adjecent nukes being int 0
+        self.adj_nukes =    0                   # start with the value of adja cent nukes being int 0
         self.text =         ""                  # start with the text being an empty string
         self.text_colour =  constants.BLACK     # start with the text colour being BLACK
-        self.tile_num =     tile_num            # save tile num (need tile_num for nuke generation exclusion and referencing Tile instances)
+        self.tile_num =     tile_num            # save tile num (for nuke generation exclusion and Tile instances)
         self.tile_num_x =   tile_num_x
         self.tile_num_y =   tile_num_y
         # self.img_flag = pygame.image.load("data\\risk_skull_24p.png")
@@ -123,7 +126,7 @@ class Tile:
 
         # if the tile isn't a nuke
         if self.nuke == 0:
-            # set text and colour of text based on the # of adject nukes
+            # set text and colour of text based on the # of adjacent nukes
             match self.adj_nukes:
                 case 1:
                     self.text_colour = constants.BLUE
@@ -175,21 +178,22 @@ class Tile:
             # set hovering to True if the mouse curser is within the tile coordinates
             self.hovering = self.rectangle.collidepoint(event.pos)
         
-        # if a mouse button is clicked and the mousebutton was a left click
+        # if a mouse button is clicked and the mouse button was a left click
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             if self.rectangle.collidepoint(event.pos):
                 # run through logic to see if the tile_reveal function should be called
                 global game_state
                 if logic.left_click(self.revealed, self.flagged, game_state):
-                    # if the game is in WAITING (hasn't begun) then set it to INITIATING after the first left click on a tile
+                    # if the game hasn't begun then set it to INITIATING after the first left click on a tile
                     if game_state == constants.WAITING:
                         game_state = constants.INITIATING
 
-                    # Set the previously clicked tile. This affects tiles being revealed and prevents multiple reveals of the same tile
+                    # store the previously clicked tile
+                    # (to help decide when tiles should be revealed and prevents multiple reveals of the same tile)
                     Tile.last_used_tile_num = self.tile_num
                     Tile.last_used_tile_coords = self.tile_num_x, self.tile_num_y
 
-        # if a mouse button is clicked and the mousebutton was a right click
+        # if a mouse button is clicked and the mouse button was a right click
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
             if self.rectangle.collidepoint(event.pos):
                 if logic.right_click(self.revealed, game_state):

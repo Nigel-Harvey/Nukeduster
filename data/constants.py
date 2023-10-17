@@ -1,5 +1,6 @@
-# Auther:     Nigel Harvey
-# Purpose:    Contain the constants used in the game. These constants are centralized here to make changes to game dimensions and parameters simple
+# Auther:   Nigel Harvey
+# Purpose:  Contain the constants used in the game.
+#           These constants are centralized here to make changes to game dimensions and parameters simple
 
 
 # Colours
