@@ -12,7 +12,7 @@ You will need the following to run the project:
 ## How to Run the Project
 1. Download the whole project
 2. Go to the directory such that you are inside the "Nukeduster" folder
-   - Which will likly be "C:\Users\ __<your_user_name>__ \Downloads\Nukeduster" if using Windows
+   - Which will likely be "C:\Users\ __<your_user_name>__ \Downloads\Nukeduster" if using Windows
    - This can be done either by IDE, command prompt, or powershell
 3. Run nukeduster_game.py
    - This can be done by typing "py nukeduster_game.py" into IDE terminal, command prompt, or powershell
