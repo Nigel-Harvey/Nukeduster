@@ -15,9 +15,6 @@ def right_click(revealed, game_state_local):
 
 
 def left_click(revealed, flagged, game_state_local):
-    # TODO make this inclusive instead of exclusive. Make it default return false
-    # if not revealed and not flagged:
-    #     return True
     if revealed or flagged:
         return False
     if game_state_local == constants.INITIATING or game_state_local == constants.OVER:
@@ -29,16 +26,12 @@ def nuke_generation(x_width_grid, y_width_grid, nukes_num, safe_tile_num, list_o
     lis_potential_nuke_tiles = list(range(0, x_width_grid*y_width_grid))    # generate a list of all tile nums
     lis_potential_nuke_tiles.pop(safe_tile_num)                             # remove the clicked tile from the list of tiles
     lis_nukes = random.sample(lis_potential_nuke_tiles, nukes_num)          # randomly pick a number of elements from the list equal to the total 
-    # print(f"safe_tile_num: {safe_tile_num}")
-    # print(f"lis_potential_nuke_tiles: {lis_potential_nuke_tiles}, \nlis_nukes: {lis_nukes}")
-                                                                            # number of nukes desired and store the list of elements in lis_nukes
-    # print("List of nukes: ", end="")
+
+    # number of nukes desired and store the list of elements in lis_nukes
     for nuke_num in lis_nukes:                              # for each element in the list of nukes
         column = nuke_num % x_width_grid                    # find the column (x coord)
-        row = int(nuke_num/x_width_grid)                    # find the row (y coord)
-        # print(f"({column}, {row})", end=", ")
+        row = int(nuke_num/x_width_grid)                    # find the row (y coord))
         list_of_tiles[row][column].nuke = True              # set the tile with those coords to be a nuke
-    # print("")
 
 
 def reveal_tile(list_of_tiles, tile_coords, grid_width, grid_length, curr_screen):
@@ -137,8 +130,9 @@ def reveal_tile(list_of_tiles, tile_coords, grid_width, grid_length, curr_screen
         # left
         if not edge_case[3] and (list_of_tiles[y_coord][x_coord-1].revealed == 0):
             reveal_tile(list_of_tiles, (x_coord-1, y_coord), grid_width, grid_length, curr_screen)
+
     # if there is more than 0 adjacent nukes for the current tile instance
     else:
         list_of_tiles[y_coord][x_coord].adj_nukes = nuke_sum    # set attribute/parameter
-    # TODO Check if this is the best method of doing this
+
     return True     # return True to reflect that the game is continuing
