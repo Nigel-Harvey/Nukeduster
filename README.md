@@ -1,5 +1,5 @@
 # Nukeduster
-Nukeduster is the personal project written by Nigel Harvey. It is a replica of the game "Minesweeper", which can be found online at https://minesweeperonline.com/
+Nukeduster is a personal project written by Nigel Harvey. It is a replica of the game "Minesweeper", which can be found online at https://minesweeperonline.com/
 
 ## Requirements
 You will need the following to run the project:
@@ -14,6 +14,6 @@ You will need the following to run the project:
 2. Go to the directory such that you are inside the "Nukeduster" folder
    - Which will likly be "C:\Users\ __<your_user_name>__ \Downloads\Nukeduster" if using Windows
    - This can be done either by IDE, command prompt, or powershell
-3. Run nukeduster.py
-   - This can be done by typing "py nukeduster.py" into IDE terminal, command prompt, or powershell
-   - IDEs may also support clicking a run button when nukeduster.py is selected
+3. Run nukeduster_game.py
+   - This can be done by typing "py nukeduster_game.py" into IDE terminal, command prompt, or powershell
+   - IDEs may also support clicking a run button when nukeduster_game.py is selected
