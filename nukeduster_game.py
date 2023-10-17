@@ -6,11 +6,13 @@ from ui import minesweeper_ui as ui
 from data import constants
 from logic import minesweeper_logic as logic
 import pygame
+import time
 
 
 def init_game(curr_screen):
     logic.nuke_generation(curr_screen.grid_width, curr_screen.grid_length, curr_screen.nukes, ui.Tile.last_used_tile_num, curr_screen.tile_list)
     ui.game_state = constants.IN_PROGRESS
+    curr_screen.start_time = time.time()
     logic.reveal_tile(curr_screen.tile_list, ui.Tile.last_used_tile_coords, curr_screen.grid_width, curr_screen.grid_length, curr_screen)
 
 
@@ -27,7 +29,9 @@ def reset_game(curr_screen):
             tile.text = ""
             tile.text_colour = constants.BLACK
     curr_screen.revealed_safe = 0
+    curr_screen.txt_nuke_count.text = str(curr_screen.nukes)
     curr_screen.txt_game_result.text = ""
+    curr_screen.txt_timer.text = "000"
     ui.game_state = constants.WAITING
     return False
 
@@ -50,6 +54,7 @@ def game_over(curr_screen):
                 if tile.nuke:
                     tile.flagged = True
         
+        curr_screen.txt_nuke_count.text = "0"
         curr_screen.txt_game_result.text = "WIN"
 
     # Lose condition
@@ -126,7 +131,7 @@ def play_game():
                 # loop through the tile list and check for events such as hovering or clicks
                 for list_row in current_screen.tile_list:
                     for tile in list_row:
-                        tile.handle_event(event)
+                        tile.handle_event(event, current_screen)
 
                 # if a game is in progress and a tile has just been clicked (this only runs immediately after a tile is clicked, and not again until a new tile is clicked)
                 if (ui.game_state == constants.IN_PROGRESS) and (ui.Tile.last_used_tile_num != last_revealed_tile):
@@ -150,11 +155,22 @@ def play_game():
             # overwrite old last tile with new last tile
             last_revealed_tile = ui.Tile.last_used_tile_num
 
-            # draw all elements (buttons, textboxes, etc)
-            current_screen.draw(screen)
+        # if currently in a game (not the menu)
+        if screen_state != constants.MENU and ui.game_state != constants.OVER and ui.game_state != constants.WAITING:
+            # update timer
+            current_screen.time_played_s = time.time() - current_screen.start_time
+            if int(current_screen.time_played_s/10) == 0:
+                current_screen.txt_timer.text = "00" + str(int(current_screen.time_played_s))
+            elif int(current_screen.time_played_s/100) == 0:
+                current_screen.txt_timer.text = "0" + str(int(current_screen.time_played_s))
+            elif int(current_screen.time_played_s/1000) == 0:
+                current_screen.txt_timer.text = str(int(current_screen.time_played_s))
 
-            # finally, update the display
-            pygame.display.update()
+        # draw all elements (buttons, textboxes, etc)
+        current_screen.draw(screen)
+
+        # finally, update the display
+        pygame.display.update()
 
 
 # if the nukeduster_game.py file is ran
