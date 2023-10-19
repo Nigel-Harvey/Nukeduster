@@ -99,9 +99,10 @@ class Tile:
     last_used_tile_num = None
     last_used_tile_coords = None
 
-    def __init__(self, x_coord, y_coord, width, length, colour, hover_colour, tile_num, tile_num_x, tile_num_y):
+    def __init__(self, x_coord, y_coord, width, length, colour, hover_colour, reveal_colour, tile_num, tile_num_x, tile_num_y):
         self.rectangle =    pygame.Rect(x_coord, y_coord, width, length)
         self.colour =       colour
+        self.reveal_colour =reveal_colour
         self.hover_colour = hover_colour
         self.font =         pygame.font.Font(None, 36)
         self.hovering =     False               # start without hover active
@@ -292,6 +293,7 @@ class EasyScreen(DifficultyScreen):
         self.screen_length =    constants.EASY_LENGTH
         self.nukes =            constants.EASY_NUKES
         self.screen_colour =    constants.GREEN_DARK
+        self.mode_name =        "Easy"
 
         # create Button instances and store all Button instances in button_list
         self.but_menu =     Button(x_coord=10, y_coord=self.screen_length - (30 + 10), width=80, length=30, text="Menu", colour=constants.WHITE, hover_colour=constants.GREY, action=menu_action)
@@ -332,6 +334,7 @@ class MediumScreen(DifficultyScreen):
         self.screen_length =    constants.MEDIUM_LENGTH
         self.nukes =            constants.MEDIUM_NUKES
         self.screen_colour =    constants.ORANGE
+        self.mode_name =        "Medium"
 
         # create Button instances and store all Button instances in button_list
         self.but_menu =     Button(x_coord=10, y_coord=self.screen_length - (30 + 10), width=80, length=30, text="Menu", colour=constants.WHITE, hover_colour=constants.GREY, action=menu_action)
@@ -372,6 +375,7 @@ class HardScreen(DifficultyScreen):
         self.screen_length =    constants.HARD_LENGTH
         self.nukes =            constants.HARD_NUKES
         self.screen_colour =    constants.RED_DARK
+        self.mode_name =        "Hard"
 
         # create Button instances and store all Button instances in button_list
         self.but_menu =     Button(x_coord=10, y_coord=self.screen_length - (30 + 10), width=80, length=30, text="Menu", colour=constants.WHITE, hover_colour=constants.GREY, action=menu_action)
@@ -411,7 +415,8 @@ def tile_generation(x_tiles, y_tiles, x_coord_offset=0, y_coord_offset=0):
         for row_element in range(x_tiles):                              # loop through all row_elements, which are represented by x
             # store a Tile instance in the tile_list list at the correct index
             tile_list[list_row][row_element] = Tile(
-                                                    x_coord, y_coord, constants.TILE_WIDTH, constants.TILE_WIDTH, constants.GREY, constants.GREY_LIGHT, 
+                                                    x_coord, y_coord, constants.TILE_WIDTH, constants.TILE_WIDTH, 
+                                                    constants.GREY, constants.GREY_DARK, constants.GREY_LIGHT,
                                                     (row_element + list_row*x_tiles), row_element, list_row)
             x_coord += constants.SPACE_BETWEEN_TILES + constants.TILE_WIDTH     # increase the x coordinate so that tiles don't overlap
         y_coord += constants.SPACE_BETWEEN_TILES + constants.TILE_WIDTH         # increase the y coordinate so that tiles don't overlap

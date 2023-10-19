@@ -42,7 +42,10 @@ def reveal_tile(list_of_tiles, tile_coords, grid_width, grid_length, curr_screen
     # Set tile parameters to indicate it's been revealed
     list_of_tiles[y_coord][x_coord].revealed = True
     list_of_tiles[y_coord][x_coord].flagged = False
-    list_of_tiles[y_coord][x_coord].colour = list_of_tiles[y_coord][x_coord].hover_colour
+    
+    # keep tile colour constant as the reveal colour
+    list_of_tiles[y_coord][x_coord].colour = list_of_tiles[y_coord][x_coord].reveal_colour
+    list_of_tiles[y_coord][x_coord].hover_colour = list_of_tiles[y_coord][x_coord].reveal_colour
 
     # return False if it's a nuke
     if list_of_tiles[y_coord][x_coord].nuke:

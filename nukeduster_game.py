@@ -34,7 +34,8 @@ def reset_game(curr_screen):
             tile.flagged = False
             tile.nuke = False
             tile.colour = constants.GREY
-            tile.hover_colour = constants.GREY_LIGHT
+            # tile.hover_colour = constants.GREY_LIGHT
+            tile.hover_colour = constants.GREY_DARK
             tile.adj_nukes = 0
             tile.text = ""
             tile.text_colour = constants.BLACK
@@ -113,6 +114,7 @@ def play_game():
     running = True
     last_revealed_tile = None
     end_game_reached = False
+    has_been_recorded = False
     while running:
         # loop through all pygame events
         for event in pygame.event.get():
@@ -168,10 +170,12 @@ def play_game():
                 # if the reset button is clicked
                 elif ui.game_state == constants.RESET:
                     end_game_reached = reset_game(current_screen)
+
                 # if a nuke is clicked or all safe tiles have been revealed
                 elif ui.game_state == constants.OVER:
                     if not end_game_reached:
                         end_game_reached = game_over(current_screen)
+                        has_been_recorded = False
 
             # overwrite old last tile with new last tile
             last_revealed_tile = ui.Tile.last_used_tile_num
@@ -186,6 +190,34 @@ def play_game():
                 current_screen.txt_timer.text = "0" + str(int(current_screen.time_played_s))
             elif int(current_screen.time_played_s/1000) == 0:
                 current_screen.txt_timer.text = str(int(current_screen.time_played_s))
+
+        if screen_state != constants.MENU and not has_been_recorded:
+            if ui.game_state == constants.OVER and current_screen.txt_game_result.text == "WIN":
+                has_been_recorded = True
+                print("Recording Data")
+                file_path = 'game_data.txt'
+                name = "Nigel H"
+
+                try:
+                    # with open(file_path, 'w', encoding='utf-8') as file:
+                    with open(file_path, 'a') as file:
+                        # File is successfully opened
+                        current_struct_time = time.localtime()
+                        year =  current_struct_time.tm_year
+                        month = current_struct_time.tm_mon
+                        day =   current_struct_time.tm_mday
+                        hour =  current_struct_time.tm_hour
+                        min =   current_struct_time.tm_min
+                        # Write content to the file
+                        string_to_write = f"{current_screen.mode_name}, {current_screen.txt_timer.text}, {name}, {hour}:{min}, {day} {month} {year}\n"
+                        file.write(string_to_write)
+
+                except FileNotFoundError:
+                    print("File not found.")
+                except PermissionError:
+                    print("Permission denied to open the file.")
+                except Exception as e:
+                    print(f"An error occurred: {e}")
 
         # draw all elements (buttons, textboxes, etc)
         current_screen.draw(screen)
