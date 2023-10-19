@@ -3,18 +3,16 @@ Bug List:
 
 
 Feature Addition:
-    1. Make hover colour different from revealed colour - DONE
-    2. Keep screen size constant and center the grids
+    1. Keep screen size constant and center the grids
 
 
 Cleaning:
-    1. rename functions to be more clear. ie. left_click = is_revealable
+    1. rename functions to be more clear. ie. left_click = is_revealable - DONE
     2. make functions inclusive instead of exclusive
 
 
 Bigger Feature Ideas:
     1. Scoreboard with name input (would require a file to store data (xlsx or txt would work))
-        a. log for scores - DONE
         b. UI to show the top scores
     2. Build a bot (using ML) to play the game and get good. 
     3. Coop option (can play over LAN or through browser)
