@@ -6,23 +6,34 @@ import random
 from data import constants
 
 
-def right_click(revealed, game_state_local):
-    if revealed:
+def is_flaggable(is_revealed, game_state_local):
+    # if the tile is already revealed don't allow a flag
+    if is_revealed:
         return False
+
+    # if the game state is anything other than in progress than don't allow a flag
     if game_state_local != constants.IN_PROGRESS:
         return False
+
+    # allow a flag
     return True
 
 
-def left_click(revealed, flagged, game_state_local):
-    if revealed or flagged:
+def is_revealable(is_revealed, is_flagged, game_state_local):
+    # if the tile is already revealed or flagged, then don't allow a reveal 
+    if is_revealed or is_flagged:
         return False
+
+    # if the game state is initiating or over don't allow reveals
     if game_state_local == constants.INITIATING or game_state_local == constants.OVER:
         return False
+
+    # allow a reveal
     return True
 
 
 def nuke_generation(x_width_grid, y_width_grid, nukes_num, safe_tile_num, list_of_tiles):
+    # generate the list of integers corresponding to which tiles will be nukes
     lis_potential_nuke_tiles = list(range(0, x_width_grid*y_width_grid))    # generate a list of all tile nums
     lis_potential_nuke_tiles.pop(safe_tile_num)                             # remove clicked tile from list of tiles
     lis_nukes = random.sample(lis_potential_nuke_tiles, nukes_num)          # randomly pick a num of elems from
@@ -42,7 +53,7 @@ def reveal_tile(list_of_tiles, tile_coords, grid_width, grid_length, curr_screen
     # Set tile parameters to indicate it's been revealed
     list_of_tiles[y_coord][x_coord].revealed = True
     list_of_tiles[y_coord][x_coord].flagged = False
-    
+
     # keep tile colour constant as the reveal colour
     list_of_tiles[y_coord][x_coord].colour = list_of_tiles[y_coord][x_coord].reveal_colour
     list_of_tiles[y_coord][x_coord].hover_colour = list_of_tiles[y_coord][x_coord].reveal_colour
