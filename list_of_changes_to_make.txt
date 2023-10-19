@@ -3,7 +3,8 @@ Bug List:
 
 
 Feature Addition:
-    1. 
+    1. Make hover colour different from revealed colour - DONE
+    2. Keep screen size constant and center the grids
 
 
 Cleaning:
@@ -13,5 +14,7 @@ Cleaning:
 
 Bigger Feature Ideas:
     1. Scoreboard with name input (would require a file to store data (xlsx or txt would work))
+        a. log for scores - DONE
+        b. UI to show the top scores
     2. Build a bot (using ML) to play the game and get good. 
     3. Coop option (can play over LAN or through browser)
