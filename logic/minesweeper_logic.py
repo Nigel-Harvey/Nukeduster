@@ -7,29 +7,18 @@ from data import constants
 
 
 def is_flaggable(is_revealed, game_state_local):
-    # if the tile is already revealed don't allow a flag
-    if is_revealed:
-        return False
-
-    # if the game state is anything other than in progress than don't allow a flag
-    if game_state_local != constants.IN_PROGRESS:
-        return False
-
-    # allow a flag
-    return True
+    # if the tile is not revealed and the game is in progress, allow a flag
+    if not is_revealed and game_state_local == constants.IN_PROGRESS:
+        return True
+    return False
 
 
 def is_revealable(is_revealed, is_flagged, game_state_local):
-    # if the tile is already revealed or flagged, then don't allow a reveal 
-    if is_revealed or is_flagged:
-        return False
-
-    # if the game state is initiating or over don't allow reveals
-    if game_state_local == constants.INITIATING or game_state_local == constants.OVER:
-        return False
-
-    # allow a reveal
-    return True
+    # if the tile is not revealed or flagged, and the game state is in progress or waiting, then allow a reveal 
+    if (not is_revealed or not is_flagged and
+        game_state_local == constants.WAITING or game_state_local == constants.IN_PROGRESS):
+        return True
+    return False
 
 
 def nuke_generation(x_width_grid, y_width_grid, nukes_num, safe_tile_num, list_of_tiles):

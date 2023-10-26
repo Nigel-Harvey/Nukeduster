@@ -141,8 +141,8 @@ def play_game():
             for button in current_screen.button_list:
                 button.handle_event(event)
 
-            # if currently in a game (not the menu)
-            if screen_state != constants.MENU:
+            # if currently in a game
+            if screen_state == constants.EASY or screen_state == constants.MEDIUM or screen_state == constants.HARD:
                 # loop through the tile list and check for events such as hovering or clicks
                 for list_row in current_screen.tile_list:
                     for tile in list_row:
@@ -183,9 +183,10 @@ def play_game():
             # overwrite old last tile with new last tile
             last_revealed_tile = ui.Tile.last_used_tile_num
 
-        # if currently in a game (not the menu)
-        if screen_state != constants.MENU and ui.game_state != constants.OVER and ui.game_state != constants.WAITING:
-            # update timer
+        # if currently in a game -> leads to updating the timer
+        if ((screen_state == constants.EASY or screen_state == constants.MEDIUM or screen_state == constants.HARD) and 
+            (ui.game_state == constants.INITIATING or ui.game_state == constants.IN_PROGRESS)):
+            # update timer on the GUI
             current_screen.time_played_s = time.time() - current_screen.start_time
             if int(current_screen.time_played_s/10) == 0:
                 current_screen.txt_timer.text = "00" + str(int(current_screen.time_played_s))
@@ -195,7 +196,8 @@ def play_game():
                 current_screen.txt_timer.text = str(int(current_screen.time_played_s))
 
         # if in a game screen and the score hasn't been recorded yet (to prevent multiple writes)
-        if screen_state != constants.MENU and not has_been_recorded:
+        if ((screen_state == constants.EASY or screen_state == constants.MEDIUM or screen_state == constants.HARD) and 
+            not has_been_recorded):
             # if the game is over and the user won
             if ui.game_state == constants.OVER and current_screen.txt_game_result.text == "WIN":
                 has_been_recorded = True
