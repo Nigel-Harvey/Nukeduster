@@ -1,0 +1,18 @@
+Bug List:
+    1. Lag when a bomb is hit and no pygame event
+
+
+Feature Addition:
+    1. Keep screen size constant and center the grids
+    2. Add a function to detect OS and use if statements for directory variables so that MAC users can play
+
+
+Cleaning:
+    1. make functions inclusive instead of exclusive - DONE
+
+
+Bigger Feature Ideas:
+    1. Scoreboard with name input
+        b. UI to show the top scores
+    2. Build a bot (using ML) to play the game and get good. 
+    3. Coop option (can play over LAN or through browser)
