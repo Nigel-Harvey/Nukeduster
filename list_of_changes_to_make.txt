@@ -1,10 +1,12 @@
 Bug List:
     1. Lag when a bomb is hit and no pygame event
+	2. mac users have different directory types. 
+        a. find code to detect OS
+        b. depending on OS, choose which string to make the directory 
 
 
 Feature Addition:
     1. Keep screen size constant and center the grids
-    2. Add a function to detect OS and use if statements for directory variables so that MAC users can play
 
 
 Cleaning:

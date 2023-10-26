@@ -14,6 +14,12 @@ Easy, 006, Nigel harvey, 17:59, 19 10 2023
 Easy, 020, Nigel Harvey, 18:02, 19 10 2023
 Easy, 017, Nigel, 18:04, 19 10 2023
 Easy, 021, Nigel, 18:07, 19 10 2023
+Easy, 015, Nigel Harvey, 18:16, 19 10 2023
+Easy, 022, Nigel Harvey, 18:16, 19 10 2023
+Easy, 008, Nigel Harvey, 18:17, 19 10 2023
+Easy, 016, Eva, 9:38, 20 10 2023
+Medium, 662, Alex F, 1:39, 22 10 2023
+Medium, 070, Nigel H, 1:49, 22 10 2023
 Easy, 114, Not Stu, 14:50, 24 10 2023
 Medium, 113, Nigel, 16:43, 25 10 2023
 Medium, 068, Nigel, 16:44, 25 10 2023
