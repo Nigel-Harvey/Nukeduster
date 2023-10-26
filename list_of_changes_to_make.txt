@@ -3,14 +3,18 @@ Bug List:
 	2. mac users have different directory types. 
         a. find code to detect OS
         b. depending on OS, choose which string to make the directory 
+    3. Menu button stays hover colour after clicking it in hard mode
+    4. Early win (still 1 tile left to reveal but shows end game. Miscounting revealed tiles again?)
 
 
 Feature Addition:
     1. Keep screen size constant and center the grids
+        a. This is proving to require a complete restructure
+    2. Break ui file into multiple files each with a single class or group of classes
 
 
 Cleaning:
-    1. make functions inclusive instead of exclusive - DONE
+    1. 
 
 
 Bigger Feature Ideas:
