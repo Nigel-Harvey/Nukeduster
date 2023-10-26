@@ -6,6 +6,9 @@ import pygame
 import sys
 from data import constants
 from logic import minesweeper_logic as logic
+from .ui_button import Button
+from .ui_textbox import TextBox
+from .ui_tile import Tile
 
 
 global screen_state
@@ -26,39 +29,32 @@ def change_game_state(new_state):
     game_state = new_state
 
 
-class Button:
-    def __init__(self, x_coord, y_coord, width, length, text, colour, hover_colour, action):
-        self.rectangle = pygame.Rect(x_coord, y_coord, width, length)
-        self.text = text
-        self.colour = colour
-        self.hover_colour = hover_colour
-        self.action = action
-        self.font = pygame.font.Font(None, 36)
-        self.hovering = False
+def left_click_action(tile):
+    # run through logic to see if the tile_reveal function should be called
+    global game_state
+    if logic.is_revealable(tile.revealed, tile.flagged, game_state):
+        # if the game hasn't begun then set it to INITIATING after the first left click on a tile
+        if game_state == constants.WAITING:
+            game_state = constants.INITIATING
 
-    def draw(self, screen):
-        if self.hovering:
-            pygame.draw.rect(screen, self.hover_colour, self.rectangle)
+        # store the previously clicked tile
+        # (to help decide when tiles should be revealed and prevents multiple reveals of the same tile)
+        Tile.last_used_tile_num = tile.tile_num
+        Tile.last_used_tile_coords = tile.tile_num_x, tile.tile_num_y
+    tile.is_left_clicked = False
+
+
+def right_click_action(tile, current_screen_fn):
+    if logic.is_flaggable(tile.revealed, game_state):
+        # toggle the flag
+        tile.flagged = not tile.flagged
+
+        # adjust the nuke count output
+        if tile.flagged:
+            current_screen_fn.txt_nuke_count.text = str(int(current_screen_fn.txt_nuke_count.text)-1)
         else:
-            pygame.draw.rect(screen, self.colour, self.rectangle)
-
-        # renders chosen text
-        text_surface = self.font.render(self.text, True, constants.BLACK)
-        text_rectangle = text_surface.get_rect(center=self.rectangle.center)
-
-        # draw onto the screen
-        screen.blit(text_surface, text_rectangle)
-
-    def handle_event(self, event):
-        # if the mouse cursor moves
-        if event.type == pygame.MOUSEMOTION:
-            # set hovering to True if the mouse curser is within the buttons coordinates
-            self.hovering = self.rectangle.collidepoint(event.pos)
-        
-        # if a mouse button is clicked and the mouse button was a left click
-        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            if self.rectangle.collidepoint(event.pos):
-                self.action()
+            current_screen_fn.txt_nuke_count.text = str(int(current_screen_fn.txt_nuke_count.text)+1)
+    tile.is_right_clicked = False
 
 
 # define all the actions that different buttons have
@@ -93,136 +89,6 @@ def menu_action():
 
     # reset if the player goes from the game to the menu
     reset_action()
-
-
-class Tile:
-    last_used_tile_num = None
-    last_used_tile_coords = None
-
-    def __init__(self, x_coord, y_coord, width, length, colour, hover_colour, reveal_colour, tile_num, tile_num_x, tile_num_y):
-        self.rectangle = pygame.Rect(x_coord, y_coord, width, length)
-        self.colour = colour
-        self.reveal_colour = reveal_colour
-        self.hover_colour = hover_colour
-        self.font = pygame.font.Font(None, 36)
-        self.hovering = False                   # start without hover active
-        self.flagged = False                    # start without tile flagged
-        self.revealed = False                   # start without tile revealed 
-        self.nuke = False                       # start without the tile being a nuke
-        self.adj_nukes = 0                      # start with the value of adja cent nukes being int 0
-        self.text = ""                          # start with the text being an empty string
-        self.text_colour = constants.BLACK      # start with the text colour being BLACK
-        self.tile_num = tile_num                # save tile num (for nuke generation exclusion and Tile instances)
-        self.tile_num_x = tile_num_x
-        self.tile_num_y = tile_num_y
-        # self.img_flag = pygame.image.load("data\\risk_skull_24p.png")
-        self.img_flag = pygame.image.load("data\\death_24p.png")
-        self.img_nuke = pygame.image.load("data\\nuclear_bomb_24p.png")
-
-    def draw(self, screen):
-        if self.hovering:
-            pygame.draw.rect(screen, self.hover_colour, self.rectangle)
-        else:
-            pygame.draw.rect(screen, self.colour, self.rectangle)
-
-        # if the tile isn't a nuke
-        if self.nuke == 0:
-            # set text and colour of text based on the # of adjacent nukes
-            match self.adj_nukes:
-                case 1:
-                    self.text_colour = constants.BLUE
-                    self.text = "1"
-                case 2:
-                    self.text_colour = constants.RED
-                    self.text = "2"
-                case 3:
-                    self.text_colour = constants.GREEN
-                    self.text = "3"
-                case 4:
-                    self.text_colour = constants.ORANGE
-                    self.text = "4"
-                case 5:
-                    self.text_colour = constants.PINK
-                    self.text = "5"
-                case 6:
-                    self.text_colour = constants.BLUE_LIGHT
-                    self.text = "6"
-                case 7:
-                    self.text_colour = constants.GREEN_DARK
-                    self.text = "7"
-                case 8:
-                    self.text_colour = constants.PURPLE
-                    self.text = "8"
-
-        # renders chosen text
-        text_surface = self.font.render(self.text, True, self.text_colour)
-        text_rectangle = text_surface.get_rect(center=self.rectangle.center)
-
-        # draw onto the screen
-        screen.blit(text_surface, text_rectangle)
-        
-        # if flagged, put the image of the flag in the tile
-        if self.flagged:
-            x = self.tile_num_x*(constants.TILE_WIDTH + constants.SPACE_BETWEEN_TILES) + 2
-            y = self.tile_num_y*(constants.TILE_WIDTH + constants.SPACE_BETWEEN_TILES) + 2 + 45
-            screen.blit(self.img_flag, (x, y))
-
-        # if a nuke that isn't flagged and is revealed, put the image of the nuke in the tile
-        if self.nuke and self.revealed and not self.flagged:
-            x = self.tile_num_x*(constants.TILE_WIDTH + constants.SPACE_BETWEEN_TILES) + 2
-            y = self.tile_num_y*(constants.TILE_WIDTH + constants.SPACE_BETWEEN_TILES) + 2 + 45
-            screen.blit(self.img_nuke, (x, y))
-
-    def handle_event(self, event, screen):
-        # if the mouse cursor moves
-        if event.type == pygame.MOUSEMOTION:
-            # set hovering to True if the mouse curser is within the tile coordinates
-            self.hovering = self.rectangle.collidepoint(event.pos)
-        
-        # if a mouse button is clicked and the mouse button was a left click
-        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            if self.rectangle.collidepoint(event.pos):
-                # run through logic to see if the tile_reveal function should be called
-                global game_state
-                if logic.is_revealable(self.revealed, self.flagged, game_state):
-                    # if the game hasn't begun then set it to INITIATING after the first left click on a tile
-                    if game_state == constants.WAITING:
-                        game_state = constants.INITIATING
-
-                    # store the previously clicked tile
-                    # (to help decide when tiles should be revealed and prevents multiple reveals of the same tile)
-                    Tile.last_used_tile_num = self.tile_num
-                    Tile.last_used_tile_coords = self.tile_num_x, self.tile_num_y
-
-        # if a mouse button is clicked and the mouse button was a right click
-        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
-            if self.rectangle.collidepoint(event.pos):
-                if logic.is_flaggable(self.revealed, game_state):
-                    # toggle the flag
-                    self.flagged = not self.flagged
-
-                    # adjust the nuke count output
-                    if self.flagged:
-                        screen.txt_nuke_count.text = str(int(screen.txt_nuke_count.text)-1)
-                    else:
-                        screen.txt_nuke_count.text = str(int(screen.txt_nuke_count.text)+1)
-
-
-class TextBox:
-    def __init__(self, width, length, text, font_size=24, colour=constants.BLACK):
-        self.width = width
-        self.length = length
-        self.rect = None
-        self.text = text
-        self.font = pygame.font.Font(None, font_size)  # You can specify a font file or use None for default font
-        self.color = colour
-
-    def set_position(self, x_coord, y_coord):
-        self.rect = pygame.Rect(x_coord, y_coord, self.width, self.length)
-
-    def draw(self, screen):
-        text_surface = self.font.render(self.text, True, self.color)
-        screen.blit(text_surface, self.rect.topleft)
 
 
 class MenuScreen:
@@ -316,7 +182,7 @@ class EasyScreen(DifficultyScreen):
         self.screen_type = constants.EASY
 
         # generate Tile instances in a grid and store them in tile_list
-        self.tile_list = tile_generation(self.grid_width, self.grid_length, x_coord_offset=0, y_coord_offset=45)
+        self.tile_list = logic.tile_generation(self.grid_width, self.grid_length, x_coord_offset=0, y_coord_offset=45)
 
     def draw(self, game_screen):
         super().draw(game_screen, self.screen_colour, self.textbox_list)
@@ -357,7 +223,7 @@ class MediumScreen(DifficultyScreen):
         self.screen_type = constants.MEDIUM
 
         # generate Tile instances in a grid and store them in tile_list
-        self.tile_list = tile_generation(self.grid_width, self.grid_length, x_coord_offset=0, y_coord_offset=45)
+        self.tile_list = logic.tile_generation(self.grid_width, self.grid_length, x_coord_offset=0, y_coord_offset=45)
 
     def draw(self, game_screen):
         super().draw(game_screen, self.screen_colour, self.textbox_list)
@@ -398,26 +264,8 @@ class HardScreen(DifficultyScreen):
         self.screen_type = constants.HARD
 
         # generate Tile instances in a grid and store them in tile_list
-        self.tile_list = tile_generation(self.grid_width, self.grid_length, x_coord_offset=0, y_coord_offset=45)
+        self.tile_list = logic.tile_generation(self.grid_width, self.grid_length, x_coord_offset=0, y_coord_offset=45)
 
     def draw(self, game_screen):
         super().draw(game_screen, self.screen_colour, self.textbox_list)
 
-
-def tile_generation(x_tiles, y_tiles, x_coord_offset=0, y_coord_offset=0):
-    # generate a 2D list to store all the tile objects
-    tile_list = [[0 for i in range(x_tiles)] for j in range(y_tiles)]
-
-    # generate all the tile objects
-    y_coord = constants.SPACE_BETWEEN_TILES + y_coord_offset            # init the y coordinate with an offset of 2 pixels + a set offset purely for visuals
-    for list_row in range(y_tiles):                                     # loop through all list_row, which are represented by y
-        x_coord = constants.SPACE_BETWEEN_TILES + x_coord_offset        # init the x coordinate with an offset of 2 pixels + a set offset purely for visuals
-        for row_element in range(x_tiles):                              # loop through all row_elements, which are represented by x
-            # store a Tile instance in the tile_list list at the correct index
-            tile_list[list_row][row_element] = Tile(
-                                                    x_coord, y_coord, constants.TILE_WIDTH, constants.TILE_WIDTH, 
-                                                    constants.GREY, constants.GREY_DARK, constants.GREY_LIGHT,
-                                                    (row_element + list_row*x_tiles), row_element, list_row)
-            x_coord += constants.SPACE_BETWEEN_TILES + constants.TILE_WIDTH     # increase the x coordinate so that tiles don't overlap
-        y_coord += constants.SPACE_BETWEEN_TILES + constants.TILE_WIDTH         # increase the y coordinate so that tiles don't overlap
-    return tile_list

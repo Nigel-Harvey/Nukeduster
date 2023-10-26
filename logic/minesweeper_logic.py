@@ -4,6 +4,7 @@
 
 import random
 from data import constants
+from ui import ui_tile
 
 
 def is_flaggable(is_revealed, game_state_local):
@@ -14,9 +15,9 @@ def is_flaggable(is_revealed, game_state_local):
 
 
 def is_revealable(is_revealed, is_flagged, game_state_local):
-    # if the tile is not revealed or flagged, and the game state is in progress or waiting, then allow a reveal 
-    if (not is_revealed or not is_flagged and
-        game_state_local == constants.WAITING or game_state_local == constants.IN_PROGRESS):
+    # if the tile is not revealed and not flagged, and the game state is in progress or waiting, then allow a reveal 
+    if ((not is_revealed and not is_flagged) and
+        (game_state_local == constants.WAITING or game_state_local == constants.IN_PROGRESS)):
         return True
     return False
 
@@ -140,3 +141,22 @@ def reveal_tile(list_of_tiles, tile_coords, grid_width, grid_length, curr_screen
         list_of_tiles[y_coord][x_coord].adj_nukes = nuke_sum    # set attribute/parameter
 
     return True     # return True to reflect that the game is continuing
+
+
+def tile_generation(x_tiles, y_tiles, x_coord_offset=0, y_coord_offset=0):
+    # generate a 2D list to store all the tile objects
+    tile_list = [[0 for i in range(x_tiles)] for j in range(y_tiles)]
+
+    # generate all the tile objects
+    y_coord = constants.SPACE_BETWEEN_TILES + y_coord_offset            # init the y coordinate with an offset of 2 pixels + a set offset purely for visuals
+    for list_row in range(y_tiles):                                     # loop through all list_row, which are represented by y
+        x_coord = constants.SPACE_BETWEEN_TILES + x_coord_offset        # init the x coordinate with an offset of 2 pixels + a set offset purely for visuals
+        for row_element in range(x_tiles):                              # loop through all row_elements, which are represented by x
+            # store a Tile instance in the tile_list list at the correct index
+            tile_list[list_row][row_element] = ui_tile.Tile(
+                                                    x_coord, y_coord, constants.TILE_WIDTH, constants.TILE_WIDTH, 
+                                                    constants.GREY, constants.GREY_DARK, constants.GREY_LIGHT,
+                                                    (row_element + list_row*x_tiles), row_element, list_row)
+            x_coord += constants.SPACE_BETWEEN_TILES + constants.TILE_WIDTH     # increase the x coordinate so that tiles don't overlap
+        y_coord += constants.SPACE_BETWEEN_TILES + constants.TILE_WIDTH         # increase the y coordinate so that tiles don't overlap
+    return tile_list

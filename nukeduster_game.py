@@ -146,7 +146,11 @@ def play_game():
                 # loop through the tile list and check for events such as hovering or clicks
                 for list_row in current_screen.tile_list:
                     for tile in list_row:
-                        tile.handle_event(event, current_screen)
+                        tile.handle_tile_event(event)
+                        if tile.is_left_clicked:
+                            ui.left_click_action(tile)
+                        if tile.is_right_clicked:
+                            ui.right_click_action(tile, current_screen)
 
                 # if a game is in progress and a tile has just been clicked
                 # (this only runs immediately after a tile is clicked, and not again until a new tile is clicked)
