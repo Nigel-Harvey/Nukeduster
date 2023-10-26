@@ -11,10 +11,12 @@ Feature Addition:
     1. Keep screen size constant and center the grids
         a. This is proving to require a complete restructure
     2. Break ui file into multiple files each with a single class or group of classes
+        a. find a way to remove game_state from tile class
+            a. changing game state shouldn't be in the basic classes
 
 
 Cleaning:
-    1. 
+    1. Have the screens inherit more similarities and edit them in their inits
 
 
 Bigger Feature Ideas:
