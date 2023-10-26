@@ -1,5 +1,5 @@
 Bug List:
-    1. 
+    1. Lag when a bomb is hit and no pygame event
 
 
 Feature Addition:
