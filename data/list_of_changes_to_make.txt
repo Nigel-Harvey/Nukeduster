@@ -4,15 +4,15 @@ Bug List:
 
 Feature Addition:
     1. Keep screen size constant and center the grids
+    2. Add a function to detect OS and use if statements for directory variables so that MAC users can play
 
 
 Cleaning:
-    1. rename functions to be more clear. ie. left_click = is_revealable - DONE
-    2. make functions inclusive instead of exclusive
+    1. make functions inclusive instead of exclusive - DONE
 
 
 Bigger Feature Ideas:
-    1. Scoreboard with name input (would require a file to store data (xlsx or txt would work))
+    1. Scoreboard with name input
         b. UI to show the top scores
     2. Build a bot (using ML) to play the game and get good. 
     3. Coop option (can play over LAN or through browser)
