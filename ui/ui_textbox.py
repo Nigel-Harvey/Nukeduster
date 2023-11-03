@@ -9,11 +9,11 @@ class TextBox:
         self.rect = None
         self.text = text
         self.font = pygame.font.Font(None, font_size)  # You can specify a font file or use None for default font
-        self.color = colour
+        self.colour = colour
 
     def set_position(self, x_coord, y_coord):
         self.rect = pygame.Rect(x_coord, y_coord, self.width, self.length)
 
     def draw(self, screen):
-        text_surface = self.font.render(self.text, True, self.color)
+        text_surface = self.font.render(self.text, True, self.colour)
         screen.blit(text_surface, self.rect.topleft)

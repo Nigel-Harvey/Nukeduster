@@ -9,6 +9,7 @@ from logic import minesweeper_logic as logic
 from .ui_button import Button
 from .ui_textbox import TextBox
 from .ui_tile import Tile
+from .ui_tbox_edit import TBoxEdit
 
 
 global screen_state
@@ -79,8 +80,7 @@ def quit_action():
 
 
 def reset_action():
-    global game_state
-    game_state = constants.RESET
+    change_game_state(constants.RESET)
 
 
 def menu_action():
@@ -94,6 +94,7 @@ def menu_action():
 class MenuScreen:
     def __init__(self, screen_type):
         self.screen_type = screen_type
+        self.player_name = "Player"
 
         # create UI elements for the menu screen
         self.button_list = []
@@ -105,10 +106,14 @@ class MenuScreen:
 
         self.txt_welcome = TextBox(200, 25, "Welcome to", 50, constants.WHITE)
         self.txt_nuke_duster = TextBox(200, 75, "Nukeduster", 64)
+        self.txt_name = TextBox(200, 25, "Enter Name:", 50, constants.WHITE)
         self.txt_welcome.set_position((constants.MENU_WIDTH - self.txt_welcome.width) / 2, 35)
         self.txt_nuke_duster.set_position((constants.MENU_WIDTH - 240) / 2, 85)
-        
-        self.img_nuke = pygame.image.load("data\\nuclear_bomb_big.png")
+        self.txt_name.set_position((constants.MENU_WIDTH)/2 - self.txt_name.width/2, 550)
+
+        self.tbox_e = TBoxEdit((constants.MENU_WIDTH)/2 - 300/2, 600, 300, 50)
+
+        self.img_nuke = pygame.image.load("data\\nuclear_bomb_256p.png")
 
     def draw(self, game_screen):
         game_screen.fill(constants.PURPLE)           # sets the screen fill and overwrites other things
@@ -116,12 +121,17 @@ class MenuScreen:
         self.but_difficulty_easy.draw(game_screen)
         self.but_difficulty_medium.draw(game_screen)
         self.but_difficulty_hard.draw(game_screen)
+
         self.but_quit.draw(game_screen)
 
         self.txt_welcome.draw(game_screen)
         self.txt_nuke_duster.draw(game_screen)
+        self.txt_name.draw(game_screen)
 
-        game_screen.blit(self.img_nuke, (45, 150))
+        self.tbox_e.draw(game_screen)
+
+        game_screen.blit(self.img_nuke, (constants.MENU_WIDTH/2 - 256/2, 200))
+        # game_screen.blit(self.img_nuke, (45, 150))
 
 
 class DifficultyScreen:

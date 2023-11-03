@@ -93,9 +93,6 @@ def game_over(curr_screen):
 
 
 def play_game():
-    # set player name
-    player_name = input("\nPlease input your name: ")
-
     pygame.init()
 
     # init instances of screens and prepare to start in the menu_screen
@@ -183,6 +180,8 @@ def play_game():
                     if not end_game_reached:
                         end_game_reached = game_over(current_screen)
                         has_been_recorded = False
+            elif screen_state == constants.MENU:
+                current_screen.tbox_e.handle_event(event)
 
             # overwrite old last tile with new last tile
             last_revealed_tile = ui.Tile.last_used_tile_num
@@ -205,6 +204,7 @@ def play_game():
             # if the game is over and the user won
             if ui.game_state == constants.OVER and current_screen.txt_game_result.text == "WIN":
                 has_been_recorded = True
+                menu_screen.player_name = menu_screen.tbox_e.text
                 print("Recording Data")
                 file_path = 'data\log_game_scores.txt'
 
@@ -222,7 +222,8 @@ def play_game():
                             min = "0" + str(min)
 
                         # write content to the file
-                        string_to_write = f"{current_screen.mode_name}, {current_screen.txt_timer.text}, {player_name}, {hour}:{min}, {day} {month} {year}\n"
+                        string_to_write =   f"{current_screen.mode_name}, {current_screen.txt_timer.text}, " \
+                                            f"{menu_screen.player_name}, {hour}:{min}, {day} {month} {year}\n"
                         file.write(string_to_write)
                 except FileNotFoundError:
                     print("File not found.")
