@@ -17,6 +17,8 @@ Feature Addition:
 
 Cleaning:
     1. Have the screens inherit more similarities and edit them in their inits
+    2. move nukeduster functions to ui file
+    3. Remove set_position functions and add into the init of the instance
 
 
 Bigger Feature Ideas:
