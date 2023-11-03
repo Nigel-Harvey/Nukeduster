@@ -1,18 +1,19 @@
 Bug List:
     1. Lag when a bomb is hit and no pygame event
+        Theory: The lag comes from the delay to release mouse down, so fix that
 	2. mac users have different directory types. 
         a. find code to detect OS
         b. depending on OS, choose which string to make the directory 
-    3. Menu button stays hover colour after clicking it in hard mode
-    4. Early win (still 1 tile left to reveal but shows end game. Miscounting revealed tiles again?)
+    3. Buttons stay hover colour after clicking it when switching game states
+        Need to find a way to reset it upon switching states
 
 
 Feature Addition:
     1. Keep screen size constant and center the grids
         a. This is proving to require a complete restructure
-    2. Break ui file into multiple files each with a single class or group of classes
-        a. find a way to remove game_state from tile class
-            a. changing game state shouldn't be in the basic classes
+    2. Break minesweeper_ui file into multiple files each with a single class or group of classes - DONE
+    3. find a way to remove game_state from tile class
+        a. changing game state shouldn't be in the basic classes - DONE
 
 
 Cleaning:

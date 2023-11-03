@@ -204,7 +204,8 @@ def play_game():
             # if the game is over and the user won
             if ui.game_state == constants.OVER and current_screen.txt_game_result.text == "WIN":
                 has_been_recorded = True
-                menu_screen.player_name = menu_screen.tbox_e.text
+                if menu_screen.tbox_e.text != "":
+                    menu_screen.player_name = menu_screen.tbox_e.text
                 print("Recording Data")
                 file_path = 'data\log_game_scores.txt'
 
