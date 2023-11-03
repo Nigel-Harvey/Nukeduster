@@ -1,5 +1,3 @@
-<MODE>, <TIMER_SCORE>, <NAME>, <CURRENT TIME>, <CURRENT_DATE>
-
 Easy, 010, Nigel H, 16:21, 17 10 2023
 Easy, 013, Nigel H, 16:21, 17 10 2023
 Easy, 013, Nigel H, 16:28, 17 10 2023

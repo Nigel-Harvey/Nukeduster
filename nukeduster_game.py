@@ -221,6 +221,8 @@ def play_game():
                         if int(min/10) == 0:
                             min = "0" + str(min)
 
+                        # Format:
+                        # <MODE>, <TIMER_SCORE>, <NAME>, <CURRENT TIME>, <CURRENT_DATE>
                         # write content to the file
                         string_to_write =   f"{current_screen.mode_name}, {current_screen.txt_timer.text}, " \
                                             f"{menu_screen.player_name}, {hour}:{min}, {day} {month} {year}\n"
