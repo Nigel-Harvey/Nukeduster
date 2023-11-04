@@ -1,5 +1,5 @@
 # Nukeduster
-Nukeduster is a personal project written by Nigel Harvey. It is a replica of the game "Minesweeper". The original version of Minesweeper can be found online at https://minesweeperonline.com/
+Nukeduster is a personal project written by Nigel Harvey. It is a replica of the game "Minesweeper" programmed modularly so that additional features can be added on. The original version of Minesweeper can be found online at https://minesweeperonline.com/. 
 
 ## Requirements
 You will need the following to run the project:

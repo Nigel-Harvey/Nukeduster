@@ -23,9 +23,9 @@ class TBoxEdit:
             pygame.draw.rect(screen, self.colour, self.rectangle)
 
         # set the border colour of the editable text box
-        colour_border = constants.WHITE
+        colour_border = constants.BLACK
         if self.active:
-            colour_border = constants.BLACK
+            colour_border = constants.WHITE
         pygame.draw.rect(screen, colour_border, self.rectangle, 5)
 
         # set text and blit to screen
