@@ -92,6 +92,7 @@ def game_over(curr_screen):
     return True
 
 
+# reveal the tile clicked and report if it was a nuke or if it was the last safe tile clicked
 def reveal_evaluate(curr_screen):
     total_safe_tiles = curr_screen.grid_width*curr_screen.grid_length - curr_screen.nukes
 
@@ -106,6 +107,7 @@ def reveal_evaluate(curr_screen):
         ui.game_state = constants.OVER
 
 
+# handle what happens when tiles are clicked
 def handle_tile_events(curr_screen, event_type):
     for list_row in curr_screen.tile_list:
         for tile in list_row:
@@ -116,6 +118,7 @@ def handle_tile_events(curr_screen, event_type):
                 ui.right_click_action(tile, curr_screen)
 
 
+# handle the event in the game that result from clicking buttons and tile updates
 def handle_game_events(curr_screen, is_end_game, prev_revealed_tile, is_recorded):
 # events are ordered in likeliness of occurring
     # if a game is in progress and a new tile has just been clicked
@@ -141,6 +144,7 @@ def handle_game_events(curr_screen, is_end_game, prev_revealed_tile, is_recorded
     return is_end_game, is_recorded
 
 
+# update the timer in the GUI with the elapsed time
 def update_timer(scrn_state, curr_screen):
         # if currently in a game -> leads to updating the timer
         if ((scrn_state == constants.EASY or scrn_state == constants.MEDIUM or scrn_state == constants.HARD) and 
@@ -155,6 +159,7 @@ def update_timer(scrn_state, curr_screen):
                 curr_screen.txt_timer.text = str(int(curr_screen.time_played_s))
 
 
+# record the player's score and name into the text file at file_pth
 def record_player_data(file_pth, curr_screen, menu_scrn):
     print("Recording Data")
     try:
@@ -190,6 +195,7 @@ def record_player_data(file_pth, curr_screen, menu_scrn):
         print(f"An error occurred: {e}")
 
     return True
+
 
 # go through the sequence that runs the game
 def play_game():
