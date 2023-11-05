@@ -92,6 +92,106 @@ def game_over(curr_screen):
     return True
 
 
+def reveal_evaluate(curr_screen):
+    total_safe_tiles = curr_screen.grid_width*curr_screen.grid_length - curr_screen.nukes
+
+    # if a nuke was clicked
+    if not logic.reveal_tile(
+    curr_screen.tile_list, ui.Tile.last_used_tile_coords, curr_screen.grid_width,
+    curr_screen.grid_length, curr_screen):
+        ui.game_state = constants.OVER
+
+    # if all safe tiles have been revealed
+    elif (curr_screen.revealed_safe == total_safe_tiles):
+        ui.game_state = constants.OVER
+
+
+def handle_tile_events(curr_screen, event_type):
+    for list_row in curr_screen.tile_list:
+        for tile in list_row:
+            tile.handle_tile_event(event_type)
+            if tile.is_left_clicked:
+                ui.left_click_action(tile)
+            if tile.is_right_clicked:
+                ui.right_click_action(tile, curr_screen)
+
+
+def handle_game_events(curr_screen, is_end_game, prev_revealed_tile, is_recorded):
+# events are ordered in likeliness of occurring
+    # if a game is in progress and a new tile has just been clicked
+    if (ui.game_state == constants.IN_PROGRESS) and (ui.Tile.last_used_tile_num != prev_revealed_tile):
+        reveal_evaluate(curr_screen)
+
+    # if the reset button is clicked
+    elif ui.game_state == constants.RESET:
+        is_end_game = not reset_game(curr_screen)
+        is_recorded = False
+        return is_end_game, is_recorded
+
+    # if the first tile has just been clicked
+    elif ui.game_state == constants.INITIATING:
+        init_game(curr_screen)
+
+    # if a nuke is clicked or all safe tiles have been revealed
+    elif ui.game_state == constants.OVER:
+        if not is_end_game:
+            is_end_game = game_over(curr_screen)
+            # is_recorded = False
+
+    return is_end_game, is_recorded
+
+
+def update_timer(scrn_state, curr_screen):
+        # if currently in a game -> leads to updating the timer
+        if ((scrn_state == constants.EASY or scrn_state == constants.MEDIUM or scrn_state == constants.HARD) and 
+            (ui.game_state == constants.INITIATING or ui.game_state == constants.IN_PROGRESS)):
+            # update timer on the GUI
+            curr_screen.time_played_s = time.time() - curr_screen.start_time
+            if int(curr_screen.time_played_s/10) == 0:
+                curr_screen.txt_timer.text = "00" + str(int(curr_screen.time_played_s))
+            elif int(curr_screen.time_played_s/100) == 0:
+                curr_screen.txt_timer.text = "0" + str(int(curr_screen.time_played_s))
+            elif int(curr_screen.time_played_s/1000) == 0:
+                curr_screen.txt_timer.text = str(int(curr_screen.time_played_s))
+
+
+def record_player_data(file_pth, curr_screen, menu_scrn):
+    print("Recording Data")
+    try:
+        # open the file and allow writing by appending a new line
+        with open(file_pth, 'a') as file:
+            # store time values
+            current_struct_time = time.localtime()
+            year =  current_struct_time.tm_year
+            month = current_struct_time.tm_mon
+            day =   current_struct_time.tm_mday
+            hour =  current_struct_time.tm_hour
+            min =   current_struct_time.tm_min
+
+            # if the miniute is less than 10, convert it to a str with a leading '0'
+            if int(min/10) == 0:
+                min = "0" + str(min)
+
+            # if the user didn't enter anything in the textbox, set to the default name
+            if menu_scrn.tbox_e.text != "":
+                menu_scrn.player_name = menu_scrn.tbox_e.text
+
+            # Format:
+            # <MODE>, <TIMER_SCORE>, <NAME>, <CURRENT TIME>, <CURRENT_DATE>
+            # write content to the file
+            string_to_write =   f"{curr_screen.mode_name}, {curr_screen.txt_timer.text}, " \
+                                f"{menu_scrn.player_name}, {hour}:{min}, {day} {month} {year}\n"
+            file.write(string_to_write)
+    except FileNotFoundError:
+        print("File not found.")
+    except PermissionError:
+        print("Permission denied to open the file.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+    return True
+
+# go through the sequence that runs the game
 def play_game():
     pygame.init()
 
@@ -110,17 +210,19 @@ def play_game():
     icon_nuke = pygame.image.load("data\\nuclear_bomb_32p.png")
     pygame.display.set_icon(icon_nuke)
 
-    # loop until user presses close button or force closes with the "Quit" button
-    running = True
+    # define necessary variables
+    is_running = True
     last_revealed_tile = None
-    end_game_reached = False
+    has_end_game_reached = False
     has_been_recorded = False
-    while running:
+
+    # loop until user presses close button or force closes with the "Quit" button
+    while is_running:
         # loop through all pygame events
         for event in pygame.event.get():
             # close game if close button is pressed
             if event.type == pygame.QUIT:
-                running = False
+                is_running = False
 
             # chose which screen is in use
             screen_state = ui.screen_state
@@ -134,106 +236,36 @@ def play_game():
                 case constants.HARD:
                     current_screen = hard_screen
 
-            # loop through the button list and check for events such as hovering or clicks
+            # loop through the current screen's button list and check for events such as hovering or clicks
             for button in current_screen.button_list:
                 button.handle_event(event)
 
             # if currently in a game
             if screen_state == constants.EASY or screen_state == constants.MEDIUM or screen_state == constants.HARD:
                 # loop through the tile list and check for events such as hovering or clicks
-                for list_row in current_screen.tile_list:
-                    for tile in list_row:
-                        tile.handle_tile_event(event)
-                        if tile.is_left_clicked:
-                            ui.left_click_action(tile)
-                        if tile.is_right_clicked:
-                            ui.right_click_action(tile, current_screen)
+                handle_tile_events(current_screen, event)
 
-                # if a game is in progress and a tile has just been clicked
-                # (this only runs immediately after a tile is clicked, and not again until a new tile is clicked)
-                if (ui.game_state == constants.IN_PROGRESS) and (ui.Tile.last_used_tile_num != last_revealed_tile):
-                    # if a nuke was clicked
-                    if not logic.reveal_tile(
-                        current_screen.tile_list, ui.Tile.last_used_tile_coords, current_screen.grid_width,
-                        current_screen.grid_length, current_screen
-                        ):
-                        # set game state to over
-                        ui.game_state = constants.OVER
-
-                    # if all safe tiles have been revealed
-                    elif (
-                        current_screen.revealed_safe ==
-                        current_screen.grid_width*current_screen.grid_length - current_screen.nukes
-                        ):
-                        # set game state to over
-                        ui.game_state = constants.OVER
-
-                # if the first tile has just been clicked
-                elif ui.game_state == constants.INITIATING:
-                    init_game(current_screen)
-                # if the reset button is clicked
-                elif ui.game_state == constants.RESET:
-                    end_game_reached = not reset_game(current_screen)
-
-                # if a nuke is clicked or all safe tiles have been revealed
-                elif ui.game_state == constants.OVER:
-                    if not end_game_reached:
-                        end_game_reached = game_over(current_screen)
-                        has_been_recorded = False
+                # depending on recent game update, take action, such as reveal tile
+                has_end_game_reached, has_been_recorded = handle_game_events(   current_screen, has_end_game_reached, 
+                                                                                last_revealed_tile, has_been_recorded)
+            # if in the menu screen check for name box events
             elif screen_state == constants.MENU:
                 current_screen.tbox_e.handle_event(event)
 
             # overwrite old last tile with new last tile
             last_revealed_tile = ui.Tile.last_used_tile_num
 
-        # if currently in a game -> leads to updating the timer
+        # update the timer value in the GUI
+        update_timer(screen_state, current_screen)
+
+        # if in a game screen, the score hasn't been recorded, the game is over, and the user won
         if ((screen_state == constants.EASY or screen_state == constants.MEDIUM or screen_state == constants.HARD) and 
-            (ui.game_state == constants.INITIATING or ui.game_state == constants.IN_PROGRESS)):
-            # update timer on the GUI
-            current_screen.time_played_s = time.time() - current_screen.start_time
-            if int(current_screen.time_played_s/10) == 0:
-                current_screen.txt_timer.text = "00" + str(int(current_screen.time_played_s))
-            elif int(current_screen.time_played_s/100) == 0:
-                current_screen.txt_timer.text = "0" + str(int(current_screen.time_played_s))
-            elif int(current_screen.time_played_s/1000) == 0:
-                current_screen.txt_timer.text = str(int(current_screen.time_played_s))
-
-        # if in a game screen and the score hasn't been recorded yet (to prevent multiple writes)
-        if ((screen_state == constants.EASY or screen_state == constants.MEDIUM or screen_state == constants.HARD) and 
-            not has_been_recorded):
-            # if the game is over and the user won
-            if ui.game_state == constants.OVER and current_screen.txt_game_result.text == "WIN":
-                has_been_recorded = True
-                if menu_screen.tbox_e.text != "":
-                    menu_screen.player_name = menu_screen.tbox_e.text
-                print("Recording Data")
-                file_path = 'data\log_game_scores.txt'
-
-                try:
-                    # with open(file_path, 'w', encoding='utf-8') as file:
-                    with open(file_path, 'a') as file:
-                        # store time values
-                        current_struct_time = time.localtime()
-                        year =  current_struct_time.tm_year
-                        month = current_struct_time.tm_mon
-                        day =   current_struct_time.tm_mday
-                        hour =  current_struct_time.tm_hour
-                        min =   current_struct_time.tm_min
-                        if int(min/10) == 0:
-                            min = "0" + str(min)
-
-                        # Format:
-                        # <MODE>, <TIMER_SCORE>, <NAME>, <CURRENT TIME>, <CURRENT_DATE>
-                        # write content to the file
-                        string_to_write =   f"{current_screen.mode_name}, {current_screen.txt_timer.text}, " \
-                                            f"{menu_screen.player_name}, {hour}:{min}, {day} {month} {year}\n"
-                        file.write(string_to_write)
-                except FileNotFoundError:
-                    print("File not found.")
-                except PermissionError:
-                    print("Permission denied to open the file.")
-                except Exception as e:
-                    print(f"An error occurred: {e}")
+        not has_been_recorded and
+        ui.game_state == constants.OVER and
+        current_screen.txt_game_result.text == "WIN"):
+            # record player score and data into the text file defined below
+            file_path = 'data\log_game_scores.txt'
+            has_been_recorded = record_player_data(file_path, current_screen, menu_screen)
 
         # draw all elements (buttons, textboxes, etc)
         current_screen.draw(screen)
