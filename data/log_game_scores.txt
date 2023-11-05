@@ -46,3 +46,10 @@ Easy, 016, Nigel, 1:24, 3 11 2023
 Hard, 408, Nigel, 1:34, 3 11 2023
 Medium, 073, Nigel, 1:38, 3 11 2023
 Easy, 012, Nigel, 4:31, 3 11 2023
+Medium, 074, Nigel H, 13:25, 4 11 2023
+Medium, 086, Nigel H, 16:55, 4 11 2023
+Medium, 072, Nigel H, 16:57, 4 11 2023
+Medium, 155, Nigel, 1:12, 5 11 2023
+Medium, 098, Nigel, 1:16, 5 11 2023
+Medium, 120, Nigel, 2:30, 5 11 2023
+Medium, 105, Nigel, 2:56, 5 11 2023
