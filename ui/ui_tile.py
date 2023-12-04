@@ -24,9 +24,9 @@ class Tile:
         self.tile_num = tile_num                # save tile num (for nuke generation exclusion and Tile instances)
         self.tile_num_x = tile_num_x
         self.tile_num_y = tile_num_y
-        # self.img_flag = pygame.image.load("data\\risk_skull_24p.png")
-        self.img_flag = pygame.image.load("data\\death_24p.png")
-        self.img_nuke = pygame.image.load("data\\nuclear_bomb_24p.png")
+        # self.img_flag = pygame.image.load("data/risk_skull_24p.png")
+        self.img_flag = pygame.image.load("data/death_24p.png")
+        self.img_nuke = pygame.image.load("data/nuclear_bomb_24p.png")
         self.is_left_clicked = False
         self.is_right_clicked = False
 
