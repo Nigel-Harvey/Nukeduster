@@ -53,3 +53,20 @@ Medium, 155, Nigel, 1:12, 5 11 2023
 Medium, 098, Nigel, 1:16, 5 11 2023
 Medium, 120, Nigel, 2:30, 5 11 2023
 Medium, 105, Nigel, 2:56, 5 11 2023
+Easy, 264, Kat, 16:31, 23 11 2023
+Easy, 166, Kat, 16:34, 23 11 2023
+Easy, 204, Kat, 16:39, 23 11 2023
+Easy, 024, Nigel, 15:34, 30 11 2023
+Easy, 016, Nigel, 15:35, 30 11 2023
+Easy, 204, Kat, 15:41, 30 11 2023
+Easy, 128, Kat, 15:47, 30 11 2023
+Easy, 091, Kat, 15:51, 30 11 2023
+Easy, 013, Nigel, 17:04, 1 12 2023
+Easy, 019, Nigel, 17:05, 1 12 2023
+Easy, 194, Jasmine Klein, 17:45, 1 12 2023
+Easy, 038, Nigel, 14:11, 4 12 2023
+Easy, 025, Nigel, 14:49, 4 12 2023
+Easy, 019, Nigel, 16:10, 4 12 2023
+Medium, 190, Nigel_No_Flag, 16:22, 4 12 2023
+Easy, 034, Nigel, 16:25, 4 12 2023
+Easy, 031, Nigel, 16:26, 4 12 2023
