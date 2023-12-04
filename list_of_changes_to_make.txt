@@ -1,30 +1,24 @@
 Bug List:
     1. Lag when a bomb is hit and no pygame event
         Theory: The lag comes from the delay to release mouse down, so fix that
-	2. mac users have different directory types. 
-        a. find code to detect OS
-        b. depending on OS, choose which string to make the directory 
-    3. Buttons stay hover colour after clicking it when switching game states
+    2. Buttons stay hover colour after clicking it when switching game states
         Need to find a way to reset it upon switching states
 
 
 Feature Addition:
     1. Keep screen size constant and center the grids
         a. This is proving to require a restructure in many classes
-    2. Break minesweeper_ui file into multiple files each with a single class or group of classes - DONE
-    3. find a way to remove game_state from tile class
-        a. changing game state shouldn't be in the basic classes - DONE
+            I may not do this because it's a small change and it's not really bad. 
+    2. find a way to remove game_state from tile class
 
 
 Cleaning:
     1. Have the screens inherit more similarities and edit them in their inits
-    2. move nukeduster functions to ui file
-    3. Remove set_position functions and add into the init of the instance
+    2. Remove set_position functions and add into the init of the instance
 
 
 Bigger Feature Ideas:
-    1. Scoreboard 
-        a. name input - DONE
+    1. Scoreboard
         b. UI to show the top scores
     2. Build a bot (using ML) to play the game and get good. 
     3. Coop option (can play over LAN or through browser)
