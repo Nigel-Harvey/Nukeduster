@@ -213,7 +213,7 @@ def play_game():
     pygame.display.set_caption("Nukeduster - A Python Project")
 
     # load the window icon
-    icon_nuke = pygame.image.load("data\\nuclear_bomb_32p.png")
+    icon_nuke = pygame.image.load("data/nuclear_bomb_32p.png")
     pygame.display.set_icon(icon_nuke)
 
     # define necessary variables

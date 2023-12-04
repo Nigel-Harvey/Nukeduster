@@ -113,7 +113,7 @@ class MenuScreen:
 
         self.tbox_e = TBoxEdit((constants.MENU_WIDTH)/2 - 300/2, 600, 300, 50)
 
-        self.img_nuke = pygame.image.load("data\\nuclear_bomb_256p.png")
+        self.img_nuke = pygame.image.load("data/nuclear_bomb_256p.png")
 
     def draw(self, game_screen):
         game_screen.fill(constants.PURPLE)           # sets the screen fill and overwrites other things
