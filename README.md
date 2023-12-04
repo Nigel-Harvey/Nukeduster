@@ -17,5 +17,6 @@ You will need the following to run the project:
    - Which will likely be "C:\Users\ __<your_user_name>__ \Downloads\Nukeduster-main" if using Windows
    - This can be done either by IDE, command prompt, or powershell
 4. Run nukeduster_game.py
-   - This can be done by typing "py nukeduster_game.py" into IDE terminal, command prompt, or powershell
+   - This can be done by typing "python nukeduster_game.py" into IDE terminal, command prompt, or powershell
+      - If python doesn't work, python may use a different name, such as py, or python3
    - IDEs may also support clicking a run button when nukeduster_game.py is selected
