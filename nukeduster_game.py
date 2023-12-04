@@ -270,7 +270,7 @@ def play_game():
         ui.game_state == constants.OVER and
         current_screen.txt_game_result.text == "WIN"):
             # record player score and data into the text file defined below
-            file_path = 'data\log_game_scores.txt'
+            file_path = 'data/log_game_scores.txt'
             has_been_recorded = record_player_data(file_path, current_screen, menu_screen)
 
         # draw all elements (buttons, textboxes, etc)
