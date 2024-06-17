@@ -139,7 +139,6 @@ def handle_game_events(curr_screen, is_end_game, prev_revealed_tile, is_recorded
     elif ui.game_state == constants.OVER:
         if not is_end_game:
             is_end_game = game_over(curr_screen)
-            # is_recorded = False
 
     return is_end_game, is_recorded
 
@@ -207,6 +206,7 @@ def play_game():
     easy_screen = ui.EasyScreen()
     medium_screen = ui.MediumScreen()
     hard_screen = ui.HardScreen()
+    scor_screen = ui.ScorScreen()
     current_screen = menu_screen
 
     # set the window caption
@@ -241,6 +241,8 @@ def play_game():
                     current_screen = medium_screen
                 case constants.HARD:
                     current_screen = hard_screen
+                case constants.SCORE:
+                    current_screen = scor_screen
 
             # loop through the current screen's button list and check for events such as hovering or clicks
             for button in current_screen.button_list:
