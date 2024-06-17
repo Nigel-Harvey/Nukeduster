@@ -184,3 +184,16 @@ Easy, 035, Nigel, 0:41, 9 5 2024
 Medium, 099, Nigel, 14:20, 9 5 2024
 Medium, 092, Nigel, 16:57, 9 5 2024
 Medium, 084, Nigel, 13:03, 13 5 2024
+Medium, 070, Nigel, 18:06, 14 6 2024
+Medium, 071, Nigel, 23:35, 14 6 2024
+Medium, 113, Nigel, 23:49, 14 6 2024
+Medium, 093, Nigel, 23:53, 14 6 2024
+Medium, 080, Nigel, 23:57, 14 6 2024
+Medium, 079, Nigel, 23:58, 14 6 2024
+Medium, 060, Nigel, 0:00, 15 6 2024
+Medium, 080, Nigel, 1:19, 15 6 2024
+Medium, 069, Nigel, 1:21, 15 6 2024
+Medium, 061, Nigel, 13:40, 15 6 2024
+Medium, 287, Nigel, 14:04, 15 6 2024
+Medium, 078, Nigel, 20:52, 16 6 2024
+Hard, 355, Nigel, 21:21, 16 6 2024
